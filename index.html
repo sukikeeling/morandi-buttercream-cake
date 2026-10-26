@@ -1,0 +1,3332 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+<meta name="theme-color" content="#f6efe7">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Ccircle cx='32' cy='32' r='30' fill='%23f5ebe1'/%3E%3Ccircle cx='32' cy='32' r='15' fill='%23b87a82'/%3E%3Ccircle cx='32' cy='32' r='7' fill='%23f3e7d6'/%3E%3C/svg%3E">
+<title>奶油花园 · Morandi Buttercream Cake</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;1,400&family=Noto+Serif+SC:wght@300;400;500&display=swap" rel="stylesheet" media="print" onload="this.media='all'">
+<style>
+/* ============================================================
+   奶油花园 · Korean Vintage Palette Knife Cake
+   Single-file Three.js experience
+   ============================================================ */
+:root{
+  --ink:#4b4039;
+  --ink-soft:rgba(75,64,57,.56);
+  --ink-faint:rgba(75,64,57,.34);
+  --cream:#f6efe7;
+  --gold:#b79a6b;
+  --gold-soft:rgba(183,154,107,.55);
+  --accent:#b87a82;
+  --glass:rgba(255,251,246,.54);
+  --glass-strong:rgba(255,251,246,.72);
+  --glass-edge:rgba(255,255,255,.78);
+  --shadow:rgba(73,52,44,.16);
+  --serif:'Playfair Display','Noto Serif SC','Songti SC',STSong,SimSun,serif;
+  --sans:'Helvetica Neue','PingFang SC','Microsoft YaHei',sans-serif;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html,body{width:100%;height:100%;overflow:hidden;background:#f6f2ed;-webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility}
+body{
+  font-family:var(--sans);color:var(--ink);
+  user-select:none;-webkit-user-select:none;-webkit-tap-highlight-color:transparent;
+  overscroll-behavior:none;touch-action:none;
+  transition:color 1.2s ease;
+}
+body.night{
+  --ink:#f4eadf;
+  --ink-soft:rgba(244,234,223,.62);
+  --ink-faint:rgba(244,234,223,.34);
+  --glass:rgba(42,34,44,.42);
+  --glass-strong:rgba(52,42,52,.58);
+  --glass-edge:rgba(255,240,225,.14);
+  --shadow:rgba(0,0,0,.4);
+}
+/* ---------- studio background ---------- */
+.bg{position:fixed;inset:0;z-index:0;pointer-events:none}
+#studio{
+  background:
+    radial-gradient(82% 74% at 30% 12%, rgba(255,255,255,.95) 0%, rgba(255,255,255,0) 62%),
+    radial-gradient(70% 60% at 78% 30%, rgba(255,255,255,.55) 0%, rgba(255,255,255,0) 70%),
+    linear-gradient(180deg,#e8e8e7 0%,#f0efee 48%,#f8f7f6 100%);
+}
+#night{
+  opacity:0;transition:opacity 1.6s ease;
+  background:
+    radial-gradient(46% 40% at 50% 46%, rgba(122,88,82,.28) 0%, rgba(122,88,82,0) 70%),
+    radial-gradient(90% 80% at 50% 110%, #33262f 0%, rgba(51,38,47,0) 60%),
+    linear-gradient(180deg,#15131b 0%,#1d1822 52%,#282029 100%);
+}
+body.night #night{opacity:1}
+#glow{
+  opacity:0;mix-blend-mode:screen;transition:opacity 1.3s ease;
+  background:radial-gradient(42% 38% at 50% 48%, rgba(255,186,106,.34) 0%, rgba(255,164,82,.13) 35%, rgba(255,164,82,0) 70%);
+}
+body.night #glow{opacity:1}
+#vignette{
+  background:radial-gradient(125% 100% at 50% 45%, rgba(0,0,0,0) 55%, rgba(83,64,56,.10) 100%);
+  opacity:.8;transition:opacity 1.4s;
+}
+body.night #vignette{opacity:.5;background:radial-gradient(120% 95% at 50% 44%, rgba(0,0,0,0) 42%, rgba(0,0,0,.55) 100%)}
+#scene{position:fixed;inset:0;width:100%;height:100%;display:block;z-index:2;outline:none;cursor:grab}
+#scene:active{cursor:grabbing}
+/* ---------- masthead ---------- */
+.masthead{
+  position:fixed;left:50%;top:30px;transform:translateX(-50%);
+  text-align:center;z-index:5;pointer-events:none;width:min(94vw,900px);
+  transition:color 1.2s ease;
+}
+.masthead .eyebrow{
+  font-family:var(--sans);font-size:9px;font-weight:400;
+  letter-spacing:.48em;text-transform:uppercase;color:var(--ink-soft);
+  padding-left:.48em;
+}
+.masthead h1{
+  font-family:var(--serif);font-weight:400;font-size:clamp(30px,3.4vw,48px);
+  letter-spacing:.16em;line-height:1.05;margin:12px 0 0 .16em;
+  color:var(--ink);
+}
+.masthead .rule{width:42px;height:1px;background:var(--gold);margin:13px auto 10px;opacity:.6}
+.masthead .sub{
+  font-family:var(--sans);font-size:9.5px;letter-spacing:.3em;
+  color:var(--ink-soft);text-transform:uppercase;padding-left:.3em;
+}
+/* ---------- side marks ---------- */
+.side-mark{
+  position:fixed;z-index:5;pointer-events:none;font-family:var(--sans);
+  font-size:8.5px;letter-spacing:.36em;text-transform:uppercase;color:var(--ink-faint);
+  transition:color 1.2s;
+}
+.side-mark--l{left:34px;top:50%;transform:rotate(180deg) translateY(50%);writing-mode:vertical-rl}
+.side-mark--r{right:34px;top:50%;transform:translateY(-50%);writing-mode:vertical-rl}
+/* ---------- dock ---------- */
+.dock-wrap{
+  position:fixed;left:50%;bottom:calc(20px + env(safe-area-inset-bottom, 0px));transform:translateX(-50%);
+  display:flex;flex-direction:column;align-items:center;gap:9px;z-index:7;
+  width:max-content;max-width:100vw;
+}
+.dock{
+  display:flex;align-items:center;gap:1px;padding:7px 9px;border-radius:999px;
+  background:var(--glass);border:1px solid var(--glass-edge);
+  -webkit-backdrop-filter:blur(20px) saturate(1.25);
+  backdrop-filter:blur(20px) saturate(1.25);
+  box-shadow:0 20px 55px var(--shadow), inset 0 1px 0 rgba(255,255,255,.55);
+  transition:background 1.2s,border-color 1.2s,box-shadow 1.2s;
+}
+.dock-btn{
+  position:relative;display:flex;flex-direction:column;align-items:center;justify-content:center;
+  gap:5px;width:86px;height:52px;border:0;border-radius:999px;background:transparent;
+  color:var(--ink);cursor:pointer;font-family:var(--sans);
+  font-size:9px;letter-spacing:.14em;line-height:1;
+  transition:background .45s ease,color .45s ease,transform .35s ease;
+}
+.dock-btn .ico{display:flex;align-items:center;justify-content:center;transition:color .4s ease,transform .45s ease}
+.dock-btn .ico svg{width:17px;height:17px;fill:none;stroke:currentColor;stroke-width:1.35;stroke-linecap:round;stroke-linejoin:round}
+.dock-btn .txt{opacity:.82;transition:opacity .35s;white-space:nowrap}
+.dock-btn:hover{background:rgba(255,255,255,.34)}
+.dock-btn:hover .txt{opacity:1}
+.dock-btn.is-on{background:var(--glass-strong)}
+.dock-btn.is-on .ico{color:var(--accent);transform:translateY(-1px)}
+.dock-btn.is-on::after{
+  content:'';position:absolute;bottom:5px;width:3px;height:3px;border-radius:50%;
+  background:var(--accent);opacity:.9;
+}
+.hint{
+  display:flex;align-items:center;justify-content:center;gap:12px;flex-wrap:wrap;
+  font-size:10px;letter-spacing:.08em;color:rgba(60,49,42,.82);
+  padding:7px 18px;max-width:min(96vw,960px);text-align:center;
+  background:rgba(255,251,246,.76);border:1px solid rgba(255,255,255,.6);
+  border-radius:999px;-webkit-backdrop-filter:blur(10px);backdrop-filter:blur(10px);
+  animation:breathe 5.4s ease-in-out infinite;transition:color 1.2s,background 1.2s,border-color 1.2s;
+}
+body.night .hint{background:rgba(35,28,38,.34);border-color:rgba(255,238,220,.10);color:rgba(244,234,223,.62)}
+.hint i{font-style:normal;color:var(--gold);opacity:.65;font-size:8px}
+@keyframes breathe{0%,100%{opacity:.52}50%{opacity:.92}}
+/* ---------- callouts ---------- */
+#calloutSvg{position:fixed;inset:0;width:100%;height:100%;z-index:4;pointer-events:none;opacity:0;transition:opacity .6s}
+#calloutSvg.on{opacity:1}
+#calloutSvg line{stroke:rgba(147,118,88,.55);stroke-width:1;vector-effect:non-scaling-stroke}
+#calloutSvg circle{fill:#fffaf3;stroke:rgba(147,118,88,.8);stroke-width:1;vector-effect:non-scaling-stroke}
+#calloutSvg .halo{fill:none;stroke:rgba(183,154,107,.28);stroke-width:5;opacity:.6}
+.callout{
+  position:fixed;width:218px;z-index:4;pointer-events:none;opacity:0;
+  padding:15px 17px 14px 18px;background:rgba(255,250,244,.62);
+  border:1px solid rgba(255,255,255,.7);border-left:1px solid var(--gold-soft);
+  -webkit-backdrop-filter:blur(16px) saturate(1.2);backdrop-filter:blur(16px) saturate(1.2);
+  box-shadow:0 18px 45px rgba(80,60,50,.10);
+  transition:background 1.2s,color 1.2s,border-color 1.2s;
+}
+body.night .callout{background:rgba(36,29,38,.5);border-color:rgba(255,238,220,.12);border-left-color:rgba(233,194,142,.5)}
+.callout .num{font-family:var(--sans);font-size:8.5px;letter-spacing:.3em;color:var(--gold);margin-bottom:7px}
+.callout h3{font-family:var(--serif);font-weight:400;font-size:14.5px;letter-spacing:.05em;color:var(--ink);margin-bottom:5px}
+.callout p{font-family:var(--sans);font-size:8px;letter-spacing:.2em;text-transform:uppercase;color:var(--ink-soft);line-height:1.7}
+.callout .desc{font-size:9.5px;letter-spacing:.05em;text-transform:none;color:var(--ink-faint);margin-top:6px;line-height:1.6}
+.callout--1{left:3.2vw;top:29%}
+.callout--2{right:3.2vw;top:23%}
+.callout--3{left:4.2vw;top:58%}
+.callout--4{right:3.2vw;top:56%}
+/* ---------- toast ---------- */
+#toast{
+  position:fixed;left:50%;bottom:126px;transform:translate(-50%,8px);
+  z-index:8;padding:9px 18px 9px 20px;border-radius:999px;
+  background:var(--glass);border:1px solid var(--glass-edge);
+  -webkit-backdrop-filter:blur(16px);backdrop-filter:blur(16px);
+  font-size:10px;letter-spacing:.16em;color:var(--ink);white-space:nowrap;
+  opacity:0;pointer-events:none;transition:opacity .45s,transform .45s,background 1.2s;
+  box-shadow:0 12px 35px rgba(70,50,45,.12);
+}
+#toast.on{opacity:1;transform:translate(-50%,0)}
+/* ---------- loader ---------- */
+#loader{
+  position:fixed;inset:0;z-index:50;display:flex;align-items:center;justify-content:center;
+  background:radial-gradient(80% 70% at 50% 38%, #fffdf9 0%, #f5ede3 60%, #efe5d9 100%);
+  transition:opacity 1s ease,visibility 1s;
+}
+#loader.done{opacity:0;visibility:hidden}
+#loader .inner{text-align:center;width:min(80vw,360px)}
+#loader .mono{font-family:var(--serif);font-size:10px;letter-spacing:.5em;color:#a2886c;text-transform:uppercase}
+#loader .mark{font-family:var(--serif);font-size:38px;letter-spacing:.18em;color:#4f4239;margin:18px 0 8px;font-weight:400}
+#loader .sub{font-size:9px;letter-spacing:.32em;color:#9a8777;text-transform:uppercase}
+#loader .bar{margin:30px auto 12px;width:150px;height:1px;background:rgba(150,125,100,.18);overflow:hidden}
+#loader .bar i{display:block;height:100%;width:0;background:linear-gradient(90deg,#c7a97e,#b87a82);transition:width .45s ease}
+#loader .status{font-size:9px;letter-spacing:.22em;color:#a89280;min-height:14px}
+#loader .err{color:#a85a5a;font-size:11px;letter-spacing:.08em;line-height:1.7;margin-top:12px;display:none}
+/* ---------- birthday card ---------- */
+#cardOverlay{
+  position:fixed;inset:0;z-index:30;display:flex;align-items:center;justify-content:center;
+  background:rgba(26,20,28,.42);-webkit-backdrop-filter:blur(12px);backdrop-filter:blur(12px);
+  opacity:0;visibility:hidden;transition:opacity .7s ease,visibility .7s;
+}
+#cardOverlay.open{opacity:1;visibility:visible}
+.bday-card{
+  position:relative;width:min(430px,86vw);padding:46px 38px 34px;text-align:center;
+  background:
+    radial-gradient(80% 70% at 50% 0%, rgba(255,255,255,.8) 0%, rgba(255,255,255,0) 60%),
+    linear-gradient(158deg,#fffaf3 0%,#f8eee2 58%,#f3e6d8 100%);
+  border:1px solid rgba(183,154,107,.5);
+  box-shadow:0 40px 100px rgba(20,12,16,.35), inset 0 0 0 1px rgba(255,255,255,.6);
+  transform:translateY(20px) scale(.975);transition:transform .8s cubic-bezier(.2,.75,.2,1);
+  color:#4b4039;
+}
+#cardOverlay.open .bday-card{transform:none}
+.bday-card::before{content:'';position:absolute;inset:11px;border:1px solid rgba(183,154,107,.25);pointer-events:none}
+.bday-card .card-eyebrow{font-size:8.5px;letter-spacing:.42em;color:#a2886c;text-transform:uppercase;padding-left:.42em}
+.bday-card h2{
+  font-family:var(--serif);font-weight:400;font-size:38px;line-height:1.05;
+  letter-spacing:.08em;margin:18px 0 12px;color:#4b4039;
+}
+.bday-card h2 em{font-style:italic;color:#b87a82}
+.bday-card .to{font-family:var(--serif);font-size:17px;letter-spacing:.16em;margin:10px 0 16px;color:#8d6f5d}
+.bday-card .flourish{display:flex;align-items:center;justify-content:center;gap:10px;margin:4px 0 16px;color:#b79a6b}
+.bday-card .flourish::before,.bday-card .flourish::after{content:'';width:42px;height:1px;background:rgba(183,154,107,.5)}
+.bday-card .flourish span{font-size:11px}
+.bday-card .msg{font-family:var(--serif);font-size:13px;line-height:2.1;letter-spacing:.08em;color:rgba(75,64,57,.78)}
+.bday-card .from{font-family:var(--serif);font-style:italic;font-size:12px;letter-spacing:.12em;color:#9c7f6a;margin-top:18px}
+.bday-card .close{
+  margin-top:24px;padding:11px 28px 12px;border-radius:999px;
+  border:1px solid rgba(183,154,107,.55);background:rgba(255,255,255,.32);
+  color:#6c5748;font-family:var(--sans);font-size:9.5px;letter-spacing:.24em;cursor:pointer;
+  transition:background .35s,transform .35s;
+}
+.bday-card .close:hover{background:rgba(255,255,255,.7);transform:translateY(-1px)}
+.dock-btn:focus-visible,.bday-card button:focus-visible{outline:1px solid var(--gold);outline-offset:3px}
+.bday-card .x{
+  position:absolute;right:18px;top:16px;border:0;background:transparent;color:#a2886c;
+  font-size:18px;line-height:1;cursor:pointer;padding:4px;opacity:.7;transition:opacity .3s;
+}
+.bday-card .x:hover{opacity:1}
+/* ---------- responsive ---------- */
+@media (max-width: 1100px){
+  .callout{width:188px;padding:12px 13px 11px 14px}
+  .callout h3{font-size:13px}
+  .callout--1{left:2vw}.callout--3{left:2.6vw}
+  .callout--2{right:2vw}.callout--4{right:2vw}
+}
+@media (max-width: 860px){
+  .side-mark{display:none}
+  .callout--3,.callout--4{display:none}
+  .callout{width:158px;padding:10px 11px 9px 12px}
+  .callout h3{font-size:12px}
+  .callout p{font-size:7px}
+  .callout .desc{display:none}
+  .dock-btn{width:68px;height:48px;font-size:8px;letter-spacing:.08em}
+  .hint{font-size:8.5px;gap:8px}
+  .hint span:nth-child(5),.hint span:nth-child(7){display:none}
+  .masthead{top:20px}
+  .masthead h1{font-size:30px}
+  .masthead .eyebrow{font-size:7.5px;letter-spacing:.35em}
+  .masthead .sub{font-size:8px}
+  #toast{bottom:112px}
+}
+@media (max-width: 600px){
+  .masthead{top:16px}
+  .masthead h1{font-size:26px;margin-top:8px}
+  .masthead .rule{margin:9px auto 7px}
+  .masthead .eyebrow{font-size:6.5px}
+  .masthead .sub{letter-spacing:.2em;font-size:7px}
+  .dock-wrap{bottom:calc(12px + env(safe-area-inset-bottom, 0px));gap:6px}
+  .dock{padding:5px 6px}
+  .dock-btn{width:59px;height:44px;gap:4px;font-size:7px;letter-spacing:.02em}
+  .dock-btn .ico svg{width:15px;height:15px}
+  .hint{font-size:7.5px;gap:6px;line-height:1.5;padding:0 10px}
+  .hint i{display:none}
+  .callout--1{left:2vw;top:26%}
+  .callout--2{right:2vw;top:24%}
+  .callout{width:136px;padding:8px 9px}
+  .callout h3{font-size:10.5px}
+  .callout .num{font-size:7px;margin-bottom:4px}
+  .callout p{font-size:6.5px;letter-spacing:.1em}
+  #loader .mark{font-size:30px}
+  .bday-card{padding:34px 24px 28px}
+  .bday-card h2{font-size:31px}
+}
+@media (prefers-reduced-motion: reduce){
+  .hint{animation:none}
+}
+</style>
+</head>
+<body>
+<noscript><div style="position:fixed;inset:0;z-index:99;display:flex;align-items:center;justify-content:center;background:#f6efe7;color:#4b4039;font-family:Georgia,serif;letter-spacing:.1em;font-size:14px;text-align:center;padding:24px;line-height:2">请开启 JavaScript，<br>才能看到这座奶油花园。</div></noscript>
+<div class="bg" id="studio"></div>
+<div class="bg" id="night"></div>
+<div class="bg" id="glow"></div>
+<div class="bg" id="vignette"></div>
+<canvas id="scene" aria-label="莫兰迪奶油裱花蛋糕 3D 展示"></canvas>
+
+<header class="masthead">
+  <div class="eyebrow">The Buttercream Atelier · Korean Vintage</div>
+  <h1>奶油花园</h1>
+  <div class="rule"></div>
+  <div class="sub">Double-tier Palette Knife Cake · 1:1 Handcrafted</div>
+</header>
+<div class="side-mark side-mark--l">The Atelier Collection · No.01</div>
+<div class="side-mark side-mark--r">Made with Buttercream &amp; Light</div>
+
+<svg id="calloutSvg" aria-hidden="true"></svg>
+<div class="callout callout--1" data-callout="0">
+  <div class="num">01 / IMPASTO</div>
+  <h3>韩式刮刀厚涂抹面</h3>
+  <p>Palette Knife Buttercream</p>
+  <div class="desc">灰雾蓝 · 丁香紫 · 蜜桃粉，横向交错的厚涂肌理</div>
+</div>
+<div class="callout callout--2" data-callout="1">
+  <div class="num">02 / ROSES</div>
+  <h3>手挤干枯玫瑰豆沙霜</h3>
+  <p>Hand-piped Buttercream Roses</p>
+  <div class="desc">十八瓣微弯花瓣，由内而外旋绕成花</div>
+</div>
+<div class="callout callout--3" data-callout="2">
+  <div class="num">03 / SHELLS</div>
+  <h3>法式复古扇形贝壳花边</h3>
+  <p>Vintage Shell Piping</p>
+  <div class="desc">放射状棱纹与珍珠糖珠，缀于每一圈奶油边缘</div>
+</div>
+<div class="callout callout--4" data-callout="3">
+  <div class="num">04 / CORE</div>
+  <h3>大溪地香草籽戚风内芯</h3>
+  <p>Vanilla Chiffon &amp; Berry Jam</p>
+  <div class="desc">树莓果酱 · 伯爵茶奶油 · 蓝莓芋泥双层夹心</div>
+</div>
+
+<div id="toast"></div>
+
+<div class="dock-wrap">
+  <div class="hint" aria-hidden="true">
+    <span>🖱️ 拖拽 360° 赏析裱花</span><i>✦</i>
+    <span>🔍 滚轮微距观察刮刀肌理</span><i>✦</i>
+    <span>✨ 点击蛋糕拆解内部夹心</span><i>✦</i>
+    <span>🕯️ 双击顶部召唤许愿蜡烛</span>
+  </div>
+  <nav class="dock" aria-label="蛋糕控制">
+    <button class="dock-btn is-on" data-action="rotate" aria-pressed="true">
+      <span class="ico"><svg viewBox="0 0 24 24"><path d="M20 11a8 8 0 1 0-2.3 5.6"/><path d="M20 4v7h-7"/></svg></span>
+      <span class="txt">自动旋转</span>
+    </button>
+    <button class="dock-btn" data-action="explode" aria-pressed="false">
+      <span class="ico"><svg viewBox="0 0 24 24"><path d="M12 3 3 8l9 5 9-5-9-5Z"/><path d="m3 13 9 5 9-5"/><path d="m3 17 9 5 9-5"/></svg></span>
+      <span class="txt">拆解结构</span>
+    </button>
+    <button class="dock-btn" data-action="candle" aria-pressed="false">
+      <span class="ico"><svg viewBox="0 0 24 24"><path d="M12 3c2.2 2.6 3.2 4.5 3.2 6.2a3.2 3.2 0 0 1-6.4 0C8.8 7.5 9.8 5.6 12 3Z"/><path d="M9 13v6M15 13v6M7 21h10"/></svg></span>
+      <span class="txt">点亮烛光</span>
+    </button>
+    <button class="dock-btn" data-action="palette" aria-pressed="false">
+      <span class="ico"><svg viewBox="0 0 24 24"><path d="M12 3a9 9 0 0 0 0 18h1.4a2.1 2.1 0 0 0 1.3-3.7 1.9 1.9 0 0 1 1.2-3.4H18a3 3 0 0 0 3-3A9 9 0 0 0 12 3Z"/><circle cx="7.5" cy="11" r="1"/><circle cx="10" cy="7" r="1"/><circle cx="14.5" cy="7.2" r="1"/></svg></span>
+      <span class="txt">切换油画配色</span>
+    </button>
+    <button class="dock-btn is-on" data-action="petals" aria-pressed="true">
+      <span class="ico"><svg viewBox="0 0 24 24"><path d="M12 12c1.8-2.8 1.4-5.7-.1-7.4-1.8 1.6-2.3 4.6-.5 7.3"/><path d="M12 12c3.2-.8 4.5-3.3 4.6-5.5-2.3 0-4.7 1.9-4.7 5.4"/><path d="M12 12c2.8 1.9 5.6 1.5 7.3.1-1.5-1.8-4.5-2.4-7.3-.6"/><path d="M12 12c.9 3.2 3.4 4.5 5.6 4.7 0-2.3-1.9-4.8-5.5-4.8"/><path d="M12 12c-2.8 1.9-3.5 4.6-3.1 6.8 2.2-.6 4.1-3.2 3.6-6.8"/><path d="M12 12c-3.1-.9-5.8.2-7.1 1.9 1.9 1.4 4.9 1.2 7.2-1.5"/></svg></span>
+      <span class="txt">花瓣雨</span>
+    </button>
+  </nav>
+</div>
+
+<div id="loader">
+  <div class="inner">
+    <div class="mono">The Buttercream Atelier</div>
+    <div class="mark">奶油花园</div>
+    <div class="sub">Handcrafting your cake</div>
+    <div class="bar"><i id="loaderBar"></i></div>
+    <div class="status" id="loaderStatus">正在准备奶油与面粉…</div>
+    <div class="err" id="loaderErr"></div>
+  </div>
+</div>
+
+<div id="cardOverlay" aria-hidden="true">
+  <div class="bday-card">
+    <button class="x" id="cardX" aria-label="关闭贺卡">×</button>
+    <div class="card-eyebrow">A Little Celebration · For You</div>
+    <h2>Happy <em>Birthday</em></h2>
+    <div class="flourish"><span>✦</span></div>
+    <div class="to" id="cardTo">致 亲爱的朋友</div>
+    <div class="msg" id="cardMsg">愿所有温柔与星光，都如期而至；<br>愿每一寸奶油、花瓣与烛光，<br>都化作岁月中闪闪发光的期许与欢喜。<br>祝你生日快乐，万事顺遂。</div>
+    <div class="from" id="cardFrom">— 你的好友</div>
+    <button class="close" id="cardClose">收下这份甜</button>
+  </div>
+</div>
+
+<script type="importmap">
+{
+  "imports": {
+    "three": "https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js",
+    "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/"
+  }
+}
+</script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+<script type="module">
+/* ============================================================================
+ * 奶油花园 · PART 1 — palette, math, procedural impasto textures
+ * ========================================================================== */
+import * as THREE from 'three';
+import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
+import { RoomEnvironment } from 'three/addons/environments/RoomEnvironment.js';
+import { mergeGeometries } from 'three/addons/utils/BufferGeometryUtils.js';
+
+const $ = (sel) => document.querySelector(sel);
+const $$ = (sel) => Array.from(document.querySelectorAll(sel));
+const nextFrame = () => new Promise((r) => requestAnimationFrame(() => requestAnimationFrame(r)));
+const isMobile = matchMedia('(max-width: 720px)').matches;
+
+const CFG = {
+  lowerR: 2.70, lowerH: 2.12,
+  upperR: 1.93, upperH: 1.72,
+  boardR: 3.26, boardH: 0.10,
+  split: 0.44,
+  fillH: 0.30,
+  topRingCount: 10,
+  midRoseCount: 8,
+  baseRoseCount: 7,
+};
+CFG.lowerTop = CFG.boardH + CFG.lowerH;      // 2.22
+CFG.upperTop = CFG.lowerTop + CFG.upperH;    // 3.94
+
+/* ----------------------------- small math ------------------------------- */
+function mulberry32(a) {
+  return function () {
+    a |= 0; a = (a + 0x6D2B79F5) | 0;
+    let t = Math.imul(a ^ (a >>> 15), 1 | a);
+    t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t;
+    return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+  };
+}
+const clamp = (v, a, b) => Math.min(b, Math.max(a, v));
+const lerp = (a, b, t) => a + (b - a) * t;
+const smoothstep = (a, b, x) => { const t = clamp((x - a) / (b - a), 0, 1); return t * t * (3 - 2 * t); };
+const easeInOut = (t) => (t < 0.5 ? 2 * t * t : 1 - Math.pow(-2 * t + 2, 2) / 2);
+const pick = (rng, arr) => arr[Math.floor(rng() * arr.length) % arr.length];
+
+/* ----------------------------- colour utils ------------------------------ */
+const hexCache = new Map();
+function hexToRgb(hex) {
+  if (hexCache.has(hex)) return hexCache.get(hex);
+  const h = hex.replace('#', '');
+  const v = h.length === 3
+    ? [parseInt(h[0] + h[0], 16), parseInt(h[1] + h[1], 16), parseInt(h[2] + h[2], 16)]
+    : [parseInt(h.slice(0, 2), 16), parseInt(h.slice(2, 4), 16), parseInt(h.slice(4, 6), 16)];
+  const out = { r: v[0], g: v[1], b: v[2] };
+  hexCache.set(hex, out);
+  return out;
+}
+function rgba(hex, a) {
+  const c = hexToRgb(hex);
+  return 'rgba(' + c.r + ',' + c.g + ',' + c.b + ',' + a + ')';
+}
+function shade(hex, amt) {
+  const c = hexToRgb(hex);
+  const f = (v) => (amt >= 0 ? Math.round(v + (255 - v) * amt) : Math.round(v * (1 + amt)));
+  return 'rgb(' + f(c.r) + ',' + f(c.g) + ',' + f(c.b) + ')';
+}
+function mixHex(a, b, t) {
+  const A = hexToRgb(a), B = hexToRgb(b);
+  const r = Math.round(lerp(A.r, B.r, t)), g = Math.round(lerp(A.g, B.g, t)), bl = Math.round(lerp(A.b, B.b, t));
+  return 'rgb(' + r + ',' + g + ',' + bl + ')';
+}
+
+/* ------------------------------- themes --------------------------------- */
+const THEMES = [
+  {
+    id: 'morandi', name: '复古莫兰迪蓝紫', accent: '#b87a82',
+    base: '#f5ebe1',
+    lower: ['#7c95b2', '#ae97ba', '#9fb7ca', '#cbb6cc', '#dfa9af', '#f5ebe1'],
+    upper: ['#dfa9af', '#7c95b2', '#ae97ba', '#d69a90', '#f5ebe1'],
+    topLower: ['#dfa9af', '#9fb7ca', '#f5ebe1', '#7c95b2', '#f5ebe1'],
+    topUpper: ['#dfa9af', '#7c95b2', '#f5ebe1', '#d69a90', '#ae97ba'],
+    roses: ['#d59aa1', '#eebfb4', '#f7ebd8'],
+    leaf: '#8a9c7e', cream: '#ecddc8',
+  },
+  {
+    id: 'matcha', name: '春日抹茶与樱粉', accent: '#9fb18f',
+    base: '#f6f0e4',
+    lower: ['#96a887', '#bcc8a6', '#e0b8b7', '#f6f0e4', '#c8cfb2', '#a8b998'],
+    upper: ['#e6b9bc', '#a6b596', '#f6f0e4', '#c6d1b2', '#dfa9af'],
+    topLower: ['#e6c2c1', '#c4ceb0', '#f6f0e4', '#a2b393', '#f6f0e4'],
+    topUpper: ['#ebc5c7', '#b1bfa1', '#f6f0e4', '#d3dcbf', '#f6f0e4'],
+    roses: ['#e3a9ac', '#f0c8bd', '#f8eedb'],
+    leaf: '#8ca07f', cream: '#f3e7d2',
+  },
+  {
+    id: 'caramel', name: '落日焦糖与伯爵茶', accent: '#b98a6f',
+    base: '#f5ebe1',
+    lower: ['#bd926b', '#ac8a76', '#dab295', '#f5ebe1', '#b8857e', '#cba68c'],
+    upper: ['#dab295', '#bd926b', '#f5ebe1', '#ac8a76', '#d69a90'],
+    topLower: ['#dfb99d', '#c39a74', '#f5ebe1', '#c08f88', '#f5ebe1'],
+    topUpper: ['#dfb99d', '#b39380', '#f5ebe1', '#c39a74', '#f5ebe1'],
+    roses: ['#d0a086', '#dcbdb4', '#f5e6d2'],
+    leaf: '#96906f', cream: '#efe0ca',
+  },
+];
+let themeIndex = 0;
+const currentTheme = () => THEMES[themeIndex];
+
+/* ------------------------- canvas texture helpers ----------------------- */
+function makeCanvas(w, h) {
+  const c = document.createElement('canvas');
+  c.width = w; c.height = h;
+  return c;
+}
+function canvasTexture(canvas, srgb = true) {
+  const t = new THREE.CanvasTexture(canvas);
+  t.colorSpace = srgb ? THREE.SRGBColorSpace : THREE.NoColorSpace;
+  t.wrapS = THREE.RepeatWrapping;
+  t.wrapT = THREE.ClampToEdgeWrapping;
+  t.anisotropy = 8;
+  t.needsUpdate = true;
+  return t;
+}
+function topTexture(canvas, srgb = true) {
+  const t = canvasTexture(canvas, srgb);
+  t.wrapS = THREE.ClampToEdgeWrapping;
+  t.wrapT = THREE.ClampToEdgeWrapping;
+  return t;
+}
+
+/* noise tile shared by all canvases */
+const NOISE = (() => {
+  const c = makeCanvas(128, 128);
+  const x = c.getContext('2d');
+  const img = x.createImageData(128, 128);
+  const rng = mulberry32(7717);
+  for (let i = 0; i < img.data.length; i += 4) {
+    const v = 120 + rng() * 70;
+    img.data[i] = v; img.data[i + 1] = v; img.data[i + 2] = v; img.data[i + 3] = 20 + rng() * 26;
+  }
+  x.putImageData(img, 0, 0);
+  return c;
+})();
+let noisePattern = null;
+
+/* ---------------------- procedural impasto layouts ----------------------- */
+/* Layouts are colour-agnostic: every theme reuses the exact same knife marks,
+   so the bump map always matches the painting and palette switches feel like
+   the same cake being repainted. */
+function createSideLayout(seed, W, H, density = 1) {
+  const rng = mulberry32(seed);
+  const under = [];
+  const smears = [];
+  const underN = Math.round(26 * density);
+  for (let i = 0; i < underN; i++) {
+    under.push({
+      x: rng() * W,
+      y: H * (0.12 + rng() * 0.76),
+      w: W * (0.028 + rng() * 0.075),
+      h: H * (0.055 + rng() * 0.14),
+      rot: (rng() - 0.5) * 0.35,
+      ci: Math.floor(rng() * 6),
+      a: 0.22 + rng() * 0.30,
+      blur: 7 + rng() * 15,
+    });
+  }
+  const smearN = Math.round(125 * density);
+  for (let i = 0; i < smearN; i++) {
+    const y = H * (0.11 + rng() * 0.78);
+    const edge = Math.min(y / H, 1 - y / H);
+    const h = H * (0.016 + rng() * 0.043);
+    const w = W * (0.012 + rng() * 0.050) * (0.8 + rng() * 0.45);
+    smears.push({
+      x: rng() * W,
+      y,
+      w, h,
+      rot: (rng() - 0.5) * 0.22,
+      ci: Math.floor(rng() * 7),
+      a: 0.72 + rng() * 0.27,
+      blur: 0.12 + rng() * 0.55,
+      edge,
+      lift: rng(),
+    });
+  }
+  const longN = Math.round(18 * density);
+  for (let i = 0; i < longN; i++) {
+    const y = H * (0.14 + rng() * 0.72);
+    smears.push({
+      x: rng() * W, y,
+      w: W * (0.065 + rng() * 0.10),
+      h: H * (0.010 + rng() * 0.020),
+      rot: (rng() - 0.5) * 0.08,
+      ci: Math.floor(rng() * 7),
+      a: 0.30 + rng() * 0.32,
+      blur: 0.4 + rng() * 1.0,
+      edge: 0.15,
+      lift: rng(),
+    });
+  }
+  const zones = [];
+  const zoneN = Math.round(22 * density);
+  for (let i = 0; i < zoneN; i++) {
+    zones.push({
+      x: rng() * W,
+      y: H * (0.11 + rng() * 0.78),
+      w: W * (0.10 + rng() * 0.22),
+      h: H * (0.10 + rng() * 0.20),
+      rot: (rng() - 0.5) * 0.12,
+      ci: Math.floor(rng() * 7),
+      a: 0.38 + rng() * 0.28,
+      blur: 8 + rng() * 16,
+    });
+  }
+  const blocks = [];
+  const blockN = Math.round(118 * density);
+  for (let i = 0; i < blockN; i++) {
+    blocks.push({
+      x: rng() * W,
+      y: H * (0.09 + rng() * 0.82),
+      w: W * (0.040 + rng() * 0.115),
+      h: H * (0.050 + rng() * 0.120),
+      rot: (rng() - 0.5) * 0.18,
+      ci: Math.floor(rng() * 7),
+      a: 0.66 + rng() * 0.30,
+      blur: 0.4 + rng() * 1.3,
+      lift: rng(),
+    });
+  }
+  return { W, H, under, zones, smears, blocks, topBand: 0.075 + rng() * 0.02, bottomBand: 0.09 + rng() * 0.02, seed };
+}
+
+function createTopLayout(seed, W, density = 1) {
+  const rng = mulberry32(seed);
+  const cx = W / 2, cy = W / 2;
+  const under = [];
+  const smears = [];
+  const underN = Math.round(22 * density);
+  for (let i = 0; i < underN; i++) {
+    const ang = rng() * Math.PI * 2;
+    const rad = Math.pow(rng(), 0.7) * W * 0.39;
+    under.push({
+      x: cx + Math.cos(ang) * rad, y: cy + Math.sin(ang) * rad,
+      w: W * (0.08 + rng() * 0.17), h: W * (0.06 + rng() * 0.14),
+      rot: (rng() - 0.5) * 1.2,
+      ci: Math.floor(rng() * 5),
+      a: 0.30 + rng() * 0.35,
+      blur: 16 + rng() * 24,
+    });
+  }
+  const smearN = Math.round(110 * density);
+  for (let i = 0; i < smearN; i++) {
+    const ang = rng() * Math.PI * 2;
+    const rad = Math.pow(rng(), 0.6) * W * 0.43;
+    smears.push({
+      x: cx + Math.cos(ang) * rad, y: cy + Math.sin(ang) * rad,
+      w: W * (0.035 + rng() * 0.12), h: W * (0.018 + rng() * 0.045),
+      rot: (rng() - 0.5) * 0.5,
+      ci: Math.floor(rng() * 6),
+      a: 0.45 + rng() * 0.4,
+      blur: 0.6 + rng() * 1.8,
+      lift: rng(),
+    });
+  }
+  return { W, H: W, under, smears, ringW: W * 0.055, seed };
+}
+
+const SIDE_W = isMobile ? 1536 : 2048;
+const SIDE_H = isMobile ? 768 : 1024;
+const TOP_S = isMobile ? 768 : 1024;
+const LAYOUTS = {
+  lowerSide: createSideLayout(20260301, SIDE_W, SIDE_H, 1.05),
+  upperSide: createSideLayout(20260302, SIDE_W, SIDE_H, 0.95),
+  lowerTop: createTopLayout(20260303, TOP_S, 1.0),
+  upperTop: createTopLayout(20260304, TOP_S, 1.1),
+};
+
+/* ------------------------- painting routines ----------------------------- */
+function drawEllipse(x, cx, cy, rx, ry, rot) {
+  x.beginPath();
+  x.ellipse(cx, cy, Math.max(0.5, rx), Math.max(0.5, ry), rot, 0, Math.PI * 2);
+  x.fill();
+}
+
+function knifePath(ctx, w, h, seed) {
+  const rng = mulberry32(seed);
+  const n = 16;
+  const pts = [];
+  for (let i = 0; i < n; i++) {
+    const a = (i / n) * Math.PI * 2;
+    const wob = 0.86 + rng() * 0.24;
+    pts.push({ x: Math.cos(a) * w * 0.5 * wob, y: Math.sin(a) * h * 0.5 * wob });
+  }
+  ctx.beginPath();
+  ctx.moveTo((pts[0].x + pts[n - 1].x) * 0.5, (pts[0].y + pts[n - 1].y) * 0.5);
+  for (let i = 0; i < n; i++) {
+    const p = pts[i], q = pts[(i + 1) % n];
+    ctx.quadraticCurveTo(p.x, p.y, (p.x + q.x) * 0.5, (p.y + q.y) * 0.5);
+  }
+  ctx.closePath();
+}
+
+function drawSmear(ctx, p, color, W, H, blurred = true) {
+  const jobs = [p.x];
+  if (p.x < p.w * 1.2) jobs.push(p.x + W);
+  if (p.x > W - p.w * 1.2) jobs.push(p.x - W);
+  const seed = Math.floor(Math.abs(p.x * 3.13 + p.y * 7.71 + p.w * 1.7)) + 11;
+  for (const px of jobs) {
+    ctx.save();
+    ctx.translate(px, p.y);
+    ctx.rotate(p.rot);
+    ctx.globalAlpha = Math.min(1, p.a + 0.08);
+    ctx.filter = 'blur(' + p.blur + 'px)';
+    const grad = ctx.createLinearGradient(0, -p.h * 0.62, 0, p.h * 0.62);
+    grad.addColorStop(0, shade(color, 0.30));
+    grad.addColorStop(0.24, color);
+    grad.addColorStop(0.66, color);
+    grad.addColorStop(1, shade(color, -0.32));
+    ctx.fillStyle = grad;
+    knifePath(ctx, p.w, p.h, seed);
+    ctx.fill();
+
+    // crisp edge defining the knife stroke
+    ctx.filter = 'blur(0.2px)';
+    ctx.globalAlpha = Math.min(0.42, p.a * 0.28);
+    ctx.strokeStyle = shade(color, -0.38);
+    ctx.lineWidth = 1.0;
+    knifePath(ctx, p.w, p.h, seed);
+    ctx.stroke();
+
+    if (p.lift > 0.28) {
+      // crisp impasto ridge along the upper lip
+      ctx.filter = 'blur(' + (blurred ? 0.45 : 0.25) + 'px)';
+      ctx.globalAlpha = Math.min(0.52, p.a * 0.36);
+      ctx.strokeStyle = shade(color, 0.30);
+      ctx.lineWidth = Math.max(1.2, p.h * 0.075);
+      ctx.beginPath();
+      ctx.moveTo(-p.w * 0.42, -p.h * 0.30);
+      ctx.quadraticCurveTo(-p.w * 0.05, -p.h * 0.44, p.w * 0.40, -p.h * 0.28);
+      ctx.stroke();
+
+      // shadowed groove beneath the smear
+      ctx.globalAlpha = Math.min(0.46, p.a * 0.30);
+      ctx.strokeStyle = shade(color, -0.36);
+      ctx.lineWidth = Math.max(1.0, p.h * 0.065);
+      ctx.beginPath();
+      ctx.moveTo(-p.w * 0.36, p.h * 0.29);
+      ctx.quadraticCurveTo(0, p.h * 0.42, p.w * 0.38, p.h * 0.26);
+      ctx.stroke();
+    }
+
+    if (p.lift > 0.58) {
+      // creamy ridge highlight (the knife's thick edge)
+      ctx.filter = 'blur(0.9px)';
+      ctx.globalAlpha = Math.min(0.28, p.a * 0.22);
+      ctx.strokeStyle = 'rgba(255,249,238,0.9)';
+      ctx.lineWidth = Math.max(1.8, p.h * 0.10);
+      ctx.beginPath();
+      ctx.moveTo(-p.w * 0.38, -p.h * 0.34);
+      ctx.quadraticCurveTo(-p.w * 0.02, -p.h * 0.48, p.w * 0.38, -p.h * 0.31);
+      ctx.stroke();
+    }
+
+    if (p.lift > 0.42) {
+      // dark side shadow under the raised paint
+      ctx.globalAlpha = Math.min(0.26, p.a * 0.18);
+      ctx.strokeStyle = 'rgba(76,58,48,0.55)';
+      ctx.lineWidth = Math.max(1.5, p.h * 0.075);
+      ctx.beginPath();
+      ctx.moveTo(-p.w * 0.35, p.h * 0.36);
+      ctx.quadraticCurveTo(0, p.h * 0.50, p.w * 0.36, p.h * 0.32);
+      ctx.stroke();
+    }
+
+    // fine trowel lines
+    if (p.lift > 0.55) {
+      ctx.globalAlpha = Math.min(0.28, p.a * 0.22);
+      ctx.strokeStyle = shade(color, 0.10);
+      ctx.lineWidth = 0.9;
+      ctx.filter = 'blur(0.45px)';
+      for (let k = 0; k < 3; k++) {
+        const yy = (k - 1) * p.h * 0.22 + (rngStatic(p, k) - 0.25) * p.h * 0.1;
+        ctx.beginPath();
+        ctx.moveTo(-p.w * 0.3, yy);
+        ctx.quadraticCurveTo(0, yy + 1.2, p.w * 0.3, yy - 0.8);
+        ctx.stroke();
+      }
+    }
+    ctx.restore();
+  }
+}
+function rngStatic(p, k) {
+  const v = Math.sin(p.x * 0.017 + p.y * 0.031 + k * 12.9898) * 43758.5453;
+  return Math.abs(v - Math.floor(v)) * 0.5;
+}
+
+function paintSideCanvas(layout, theme, which) {
+  const { W, H } = layout;
+  const c = makeCanvas(W, H);
+  const ctx = c.getContext('2d');
+  const palette = which === 'lower' ? theme.lower : theme.upper;
+  const base = theme.base;
+  ctx.fillStyle = mixHex(base, palette[0], which === 'lower' ? 0.55 : 0.44);
+  ctx.fillRect(0, 0, W, H);
+
+  // broad colour fields
+  for (const p of layout.under) {
+    const col = palette[p.ci % palette.length];
+    const jobs = [p.x];
+    if (p.x < p.w) jobs.push(p.x + W);
+    if (p.x > W - p.w) jobs.push(p.x - W);
+    for (const px of jobs) {
+      ctx.save();
+      ctx.translate(px, p.y);
+      ctx.rotate(p.rot);
+      ctx.globalAlpha = p.a;
+      ctx.filter = 'blur(' + p.blur + 'px)';
+      ctx.fillStyle = col;
+      drawEllipse(ctx, 0, 0, p.w, p.h, 0);
+      ctx.restore();
+    }
+  }
+
+  // broad colour zones
+  for (const p of layout.zones) {
+    const col = palette[p.ci % palette.length];
+    const jobs = [p.x];
+    if (p.x < p.w) jobs.push(p.x + W);
+    if (p.x > W - p.w) jobs.push(p.x - W);
+    for (const px of jobs) {
+      ctx.save();
+      ctx.translate(px, p.y);
+      ctx.rotate(p.rot);
+      ctx.globalAlpha = p.a;
+      ctx.filter = 'blur(' + p.blur + 'px)';
+      ctx.fillStyle = col;
+      drawEllipse(ctx, 0, 0, p.w * 0.6, p.h * 0.55, 0.02);
+      drawEllipse(ctx, p.w * 0.12, -p.h * 0.12, p.w * 0.42, p.h * 0.45, 0.02);
+      ctx.restore();
+    }
+  }
+
+  // broad colour blocks, like the flat side of a palette knife
+  for (const p of layout.blocks) {
+    const col = palette[p.ci % palette.length];
+    drawSmear(ctx, { ...p, blur: p.blur * 0.6 }, col, W, H);
+  }
+
+  // knife smears (main impasto)
+  for (const p of layout.smears) {
+    let col = palette[p.ci % palette.length];
+    if (p.lift > 0.88) col = base;
+    drawSmear(ctx, p, col, W, H);
+  }
+
+  // a few confident cream scrapes on top
+  const creamRng = mulberry32(layout.seed + 31);
+  for (let i = 0; i < 34; i++) {
+    const p = {
+      x: creamRng() * W,
+      y: H * (0.12 + creamRng() * 0.76),
+      w: W * (0.03 + creamRng() * 0.08),
+      h: H * (0.012 + creamRng() * 0.030),
+      rot: (creamRng() - 0.5) * 0.18,
+      ci: 0, a: 0.30 + creamRng() * 0.30, blur: 0.4 + creamRng() * 1.0,
+      edge: 0.1, lift: creamRng(),
+    };
+    drawSmear(ctx, p, base, W, H);
+  }
+
+  // cream rims top & bottom with a wavy hand-piped edge
+  const rng = mulberry32(layout.seed + 99);
+  const paintBand = (where) => {
+    const bandH = (where === 'top' ? layout.topBand : layout.bottomBand) * H;
+    ctx.save();
+    ctx.beginPath();
+    const startY = where === 'top' ? 0 : H;
+    if (where === 'top') { ctx.moveTo(0, 0); ctx.lineTo(W, 0); }
+    else { ctx.moveTo(W, H); ctx.lineTo(0, H); }
+    const dir = where === 'top' ? 1 : -1;
+    const steps = 70;
+    for (let i = steps; i >= 0; i--) {
+      const x = (i / steps) * W;
+      const wob = Math.sin(i * 1.37 + layout.seed) * bandH * 0.14 + Math.sin(i * 3.1 + 1.7) * bandH * 0.06;
+      const yy = startY + dir * (bandH + wob);
+      ctx.lineTo(x, yy);
+    }
+    ctx.closePath();
+    ctx.filter = 'blur(3px)';
+    ctx.globalAlpha = 0.88;
+    ctx.fillStyle = base;
+    ctx.fill();
+    ctx.restore();
+    // a few cream flicks over the border
+    ctx.save();
+    ctx.filter = 'blur(2px)';
+    for (let i = 0; i < 26; i++) {
+      const x = rng() * W;
+      const y = startY + dir * (bandH * (0.75 + rng() * 0.45));
+      ctx.globalAlpha = 0.35 + rng() * 0.4;
+      ctx.fillStyle = base;
+      drawEllipse(ctx, x, y, 20 + rng() * 80, 8 + rng() * 20, (rng() - 0.5) * 0.2);
+    }
+    ctx.restore();
+  };
+  paintBand('top');
+  paintBand('bottom');
+
+  // very fine palette-knife scratches
+  ctx.save();
+  for (let i = 0; i < 130; i++) {
+    const p = layout.smears[(rng() * layout.smears.length) | 0];
+    if (!p) continue;
+    ctx.globalAlpha = 0.07 + rng() * 0.09;
+    ctx.strokeStyle = shade(palette[p.ci % palette.length], 0.2);
+    ctx.lineWidth = 0.7 + rng() * 1.2;
+    const y = p.y + (rng() - 0.5) * p.h;
+    const x = p.x + (rng() - 0.5) * p.w * 0.4;
+    ctx.beginPath();
+    ctx.moveTo(x - p.w * 0.22, y);
+    ctx.quadraticCurveTo(x, y + (rng() - 0.5) * 6, x + p.w * 0.26, y + (rng() - 0.5) * 3);
+    ctx.stroke();
+  }
+  ctx.restore();
+
+  // grain + tiny crumbs
+  if (!noisePattern) noisePattern = ctx.createPattern(NOISE, 'repeat');
+  ctx.save();
+  ctx.globalAlpha = 0.5;
+  ctx.globalCompositeOperation = 'soft-light';
+  ctx.fillStyle = noisePattern;
+  ctx.fillRect(0, 0, W, H);
+  ctx.restore();
+  return c;
+}
+
+function paintTopCanvas(layout, theme, which) {
+  const { W } = layout;
+  const cx = W / 2, cy = W / 2;
+  const c = makeCanvas(W, W);
+  const ctx = c.getContext('2d');
+  ctx.fillStyle = theme.base;
+  ctx.fillRect(0, 0, W, W);
+  const palette = which === 'lower' ? theme.topLower : theme.topUpper;
+  const rng = mulberry32(layout.seed + 7);
+
+  // broad pastel field
+  for (const p of layout.under) {
+    ctx.save();
+    ctx.translate(p.x, p.y);
+    ctx.rotate(p.rot);
+    ctx.globalAlpha = p.a;
+    ctx.filter = 'blur(' + p.blur + 'px)';
+    ctx.fillStyle = palette[p.ci % palette.length];
+    drawEllipse(ctx, 0, 0, p.w, p.h, 0);
+    ctx.restore();
+  }
+  // knife strokes
+  for (const p of layout.smears) {
+    let col = palette[p.ci % palette.length];
+    if (p.lift > 0.86) col = theme.base;
+    drawSmear(ctx, p, col, W, W, false);
+  }
+  // cream border ring
+  const R = W * 0.5;
+  ctx.save();
+  ctx.beginPath();
+  ctx.arc(cx, cy, R * 0.985, 0, Math.PI * 2);
+  ctx.arc(cx, cy, R * 0.895, 0, Math.PI * 2, true);
+  ctx.fillStyle = rgba(theme.base, 0.92);
+  ctx.filter = 'blur(5px)';
+  ctx.fill();
+  ctx.restore();
+  // soft scallops on the border
+  ctx.save();
+  ctx.filter = 'blur(2px)';
+  for (let i = 0; i < 46; i++) {
+    const a = (i / 46) * Math.PI * 2;
+    const rr = R * (0.89 + rng() * 0.035);
+    ctx.globalAlpha = 0.35 + rng() * 0.35;
+    ctx.fillStyle = theme.base;
+    drawEllipse(ctx, cx + Math.cos(a) * rr, cy + Math.sin(a) * rr, 30 + rng() * 55, 12 + rng() * 20, a);
+  }
+  ctx.restore();
+  // very light cream wash toward the rim
+  const grad = ctx.createRadialGradient(cx, cy, R * 0.55, cx, cy, R);
+  grad.addColorStop(0, rgba(theme.base, 0));
+  grad.addColorStop(0.82, rgba(theme.base, 0.08));
+  grad.addColorStop(1, rgba(theme.base, 0.55));
+  ctx.fillStyle = grad;
+  ctx.fillRect(0, 0, W, W);
+  // grain
+  if (!noisePattern) noisePattern = ctx.createPattern(NOISE, 'repeat');
+  ctx.save();
+  ctx.globalAlpha = 0.42;
+  ctx.globalCompositeOperation = 'soft-light';
+  ctx.fillStyle = noisePattern;
+  ctx.fillRect(0, 0, W, W);
+  ctx.restore();
+  return c;
+}
+
+function paintBump(layout, isTop) {
+  const scale = 0.5;
+  const W = Math.round(layout.W * scale);
+  const H = Math.round(layout.H * scale);
+  const c = makeCanvas(W, H);
+  const ctx = c.getContext('2d');
+  ctx.fillStyle = 'rgb(128,128,128)';
+  ctx.fillRect(0, 0, W, H);
+  const rng = mulberry32(layout.seed + 501);
+  if (!noisePattern) noisePattern = ctx.createPattern(NOISE, 'repeat');
+  for (const p of layout.under) {
+    ctx.save();
+    ctx.translate(p.x * scale, p.y * scale);
+    ctx.rotate(p.rot);
+    ctx.globalAlpha = 0.35;
+    ctx.filter = 'blur(' + (p.blur * scale * 0.8) + 'px)';
+    ctx.fillStyle = 'rgb(158,158,158)';
+    drawEllipse(ctx, 0, 0, p.w * scale, p.h * scale, 0);
+    ctx.restore();
+  }
+  for (const p of (layout.zones || [])) {
+    ctx.save();
+    ctx.translate(p.x * scale, p.y * scale);
+    ctx.rotate(p.rot);
+    ctx.globalAlpha = 0.30;
+    ctx.filter = 'blur(' + (p.blur * scale * 0.7) + 'px)';
+    ctx.fillStyle = 'rgb(150,150,150)';
+    drawEllipse(ctx, 0, 0, p.w * scale * 0.6, p.h * scale * 0.55, 0.02);
+    ctx.restore();
+  }
+  for (const p of (layout.blocks || [])) {
+    ctx.save();
+    ctx.translate(p.x * scale, p.y * scale);
+    ctx.rotate(p.rot);
+    ctx.globalAlpha = 0.56;
+    ctx.filter = 'blur(' + (1.0 + p.blur * 0.6) + 'px)';
+    ctx.fillStyle = 'rgb(172,172,172)';
+    drawEllipse(ctx, 0, 0, p.w * scale, p.h * scale, 0.02);
+    ctx.restore();
+  }
+  for (const p of layout.smears) {
+    const jobs = [p.x];
+    if (!isTop) {
+      if (p.x < p.w) jobs.push(p.x + layout.W);
+      if (p.x > layout.W - p.w) jobs.push(p.x - layout.W);
+    }
+    for (const px of jobs) {
+      ctx.save();
+      ctx.translate(px * scale, p.y * scale);
+      ctx.rotate(p.rot);
+      ctx.globalAlpha = 0.55;
+      ctx.filter = 'blur(' + (1.3 + p.blur * 0.6) + 'px)';
+      ctx.fillStyle = 'rgb(' + (172 + Math.round(rng() * 18)) + ',' + (172 + Math.round(rng() * 18)) + ',' + (172 + Math.round(rng() * 18)) + ')';
+      drawEllipse(ctx, 0, 0, p.w * scale, p.h * scale, 0.02);
+      ctx.globalAlpha = 0.7;
+      ctx.fillStyle = 'rgb(224,224,224)';
+      drawEllipse(ctx, 0, -p.h * scale * 0.40, p.w * scale * 0.58, p.h * scale * 0.18, 0);
+      ctx.fillStyle = 'rgb(58,58,58)';
+      drawEllipse(ctx, 0, p.h * scale * 0.40, p.w * scale * 0.5, p.h * scale * 0.14, 0);
+      ctx.restore();
+    }
+  }
+  // cream bands stay smooth
+  if (!isTop) {
+    const bandH = (band) => (band === 'top' ? layout.topBand : layout.bottomBand) * H;
+    ctx.fillStyle = 'rgb(132,132,132)';
+    ctx.globalAlpha = 0.85;
+    ctx.filter = 'blur(2px)';
+    ctx.fillRect(0, 0, W, bandH('top'));
+    ctx.fillRect(0, H - bandH('bottom'), W, bandH('bottom'));
+    ctx.filter = 'none';
+  } else {
+    ctx.save();
+    ctx.beginPath();
+    ctx.arc(W / 2, H / 2, W * 0.5, 0, Math.PI * 2);
+    ctx.clip();
+    ctx.strokeStyle = 'rgb(128,128,128)';
+    ctx.lineWidth = W * 0.055;
+    ctx.globalAlpha = 0.85;
+    ctx.beginPath();
+    ctx.arc(W / 2, H / 2, W * 0.465, 0, Math.PI * 2);
+    ctx.stroke();
+    ctx.restore();
+  }
+  ctx.save();
+  ctx.globalAlpha = 0.22;
+  ctx.fillStyle = noisePattern;
+  ctx.fillRect(0, 0, W, H);
+  ctx.restore();
+  return c;
+}
+
+/* ----------------------- filling & candle textures ---------------------- */
+function makeFillingTextures(kind) {
+  const W = 1024, H = 256;
+  const c = makeCanvas(W, H);
+  const x = c.getContext('2d');
+  const rng = mulberry32(kind === 'upper' ? 8181 : 9191);
+  const sponge = kind === 'upper' ? '#e8d7b7' : '#e4d3b5';
+  const jam = kind === 'upper' ? '#712b38' : '#3a2c4c';
+  const cream = kind === 'upper' ? '#cbbaa5' : '#bfaed0';
+  const layers = kind === 'upper'
+    ? [['sponge', 0.30], ['jam', 0.16], ['cream', 0.20], ['sponge', 0.20], ['cream', 0.14]]
+    : [['sponge', 0.26], ['jam', 0.18], ['cream', 0.20], ['sponge', 0.22], ['cream', 0.14]];
+  x.fillStyle = sponge; x.fillRect(0, 0, W, H);
+  let y = 0;
+  for (let i = 0; i < layers.length; i++) {
+    const [name, frac] = layers[i];
+    const h = frac * H;
+    x.beginPath();
+    x.moveTo(0, y);
+    for (let px = 0; px <= W; px += 16) {
+      const yy = y + Math.sin(px * 0.014 + i * 2.1) * (4 + rng() * 3);
+      x.lineTo(px, yy);
+    }
+    x.lineTo(W, y + h);
+    for (let px = W; px >= 0; px -= 16) {
+      const yy = y + h + Math.sin(px * 0.011 + i * 1.7) * (4 + rng() * 3);
+      x.lineTo(px, yy);
+    }
+    x.closePath();
+    x.fillStyle = name === 'sponge' ? sponge : name === 'jam' ? jam : cream;
+    x.fill();
+    y += h;
+  }
+  // layer separators
+  x.globalAlpha = 0.25;
+  x.strokeStyle = 'rgba(70,45,35,0.8)';
+  x.lineWidth = 2;
+  let sepY = 0;
+  for (let i = 0; i < layers.length - 1; i++) {
+    sepY += layers[i][1] * H;
+    x.beginPath();
+    for (let px = 0; px <= W; px += 20) {
+      const yy = sepY + Math.sin(px * 0.012 + i * 2.3) * 3;
+      if (px === 0) x.moveTo(px, yy); else x.lineTo(px, yy);
+    }
+    x.stroke();
+  }
+  // sponge pores
+  for (let i = 0; i < 2400; i++) {
+    const py = rng() * H;
+    const inSponge = layers.reduce((acc, l, idx) => {
+      const top = layers.slice(0, idx).reduce((s, v) => s + v[1], 0) * H;
+      if (l[0] === 'sponge' && py >= top && py <= top + l[1] * H) return true;
+      return acc;
+    }, false);
+    if (!inSponge) continue;
+    x.globalAlpha = 0.08 + rng() * 0.12;
+    x.fillStyle = '#9a7b53';
+    drawEllipse(x, rng() * W, py, 1.5 + rng() * 5, 1 + rng() * 3, 0);
+  }
+  // jam seeds / tea specks
+  for (let i = 0; i < 500; i++) {
+    const py = rng() * H;
+    x.globalAlpha = 0.12 + rng() * 0.25;
+    x.fillStyle = kind === 'upper' ? '#5f2732' : '#3c2d46';
+    drawEllipse(x, rng() * W, py, 1 + rng() * 2.6, 0.8 + rng() * 1.8, rng());
+  }
+  // cream swirl lines
+  x.globalAlpha = 0.12;
+  x.strokeStyle = '#fff7e8';
+  x.lineWidth = 2;
+  for (let i = 0; i < 26; i++) {
+    x.beginPath();
+    const yy = rng() * H;
+    x.moveTo(0, yy);
+    for (let px = 0; px <= W; px += 32) x.lineTo(px, yy + Math.sin(px * 0.02 + i) * 6);
+    x.stroke();
+  }
+  const map = canvasTexture(c);
+  map.wrapT = THREE.ClampToEdgeWrapping;
+
+  // cut face (top cap of the filling ring)
+  const S = 512;
+  const cc = makeCanvas(S, S);
+  const cx = cc.getContext('2d');
+  cx.fillStyle = sponge; cx.fillRect(0, 0, S, S);
+  const g = cx.createRadialGradient(S / 2, S / 2, S * 0.05, S / 2, S / 2, S * 0.5);
+  g.addColorStop(0, rgba(cream, 0.5));
+  g.addColorStop(0.28, rgba(jam, 0.55));
+  g.addColorStop(0.34, rgba(sponge, 0.0));
+  g.addColorStop(0.62, rgba(cream, 0.25));
+  g.addColorStop(1, rgba(sponge, 0.0));
+  cx.fillStyle = g; cx.fillRect(0, 0, S, S);
+  for (let i = 0; i < 900; i++) {
+    cx.globalAlpha = 0.08 + rng() * 0.12;
+    cx.fillStyle = '#a07f52';
+    drawEllipse(cx, rng() * S, rng() * S, 1 + rng() * 4, 1 + rng() * 3, 0);
+  }
+  const cut = topTexture(cc);
+  return { side: map, cut };
+}
+
+function makeCandleTexture() {
+  const W = 192, H = 512;
+  const c = makeCanvas(W, H);
+  const x = c.getContext('2d');
+  const g = x.createLinearGradient(0, 0, W, 0);
+  g.addColorStop(0, '#e8d3b4'); g.addColorStop(0.45, '#f7ecdc'); g.addColorStop(1, '#dfc7a8');
+  x.fillStyle = g; x.fillRect(0, 0, W, H);
+  x.save();
+  x.globalAlpha = 0.75;
+  x.strokeStyle = '#bc9168';
+  x.lineWidth = 15;
+  for (let i = -H; i < H * 2; i += 96) {
+    x.beginPath();
+    x.moveTo(0, i);
+    x.lineTo(W, i + 120);
+    x.stroke();
+  }
+  x.globalAlpha = 0.35;
+  x.strokeStyle = '#fdf6ea';
+  x.lineWidth = 5;
+  for (let i = -H; i < H * 2; i += 96) {
+    x.beginPath();
+    x.moveTo(0, i + 13);
+    x.lineTo(W, i + 133);
+    x.stroke();
+  }
+  x.restore();
+  const rng = mulberry32(1313);
+  for (let i = 0; i < 180; i++) {
+    x.globalAlpha = 0.05 + rng() * 0.08;
+    x.fillStyle = '#fff8ec';
+    drawEllipse(x, rng() * W, rng() * H, 1 + rng() * 4, 0.6 + rng() * 2, 0);
+  }
+  const t = canvasTexture(c);
+  t.wrapS = THREE.RepeatWrapping; t.wrapT = THREE.ClampToEdgeWrapping;
+  return t;
+}
+
+/* --------------------------- sprite textures ---------------------------- */
+function makeFlameSprite() {
+  const W = 128, H = 256;
+  const c = makeCanvas(W, H);
+  const x = c.getContext('2d');
+  x.clearRect(0, 0, W, H);
+  const g = x.createRadialGradient(W / 2, H * 0.66, 2, W / 2, H * 0.64, W * 0.48);
+  g.addColorStop(0, 'rgba(255,255,245,1)');
+  g.addColorStop(0.18, 'rgba(255,241,180,1)');
+  g.addColorStop(0.42, 'rgba(255,186,92,0.92)');
+  g.addColorStop(0.68, 'rgba(255,126,52,0.35)');
+  g.addColorStop(1, 'rgba(255,110,40,0)');
+  x.fillStyle = g;
+  x.beginPath();
+  x.moveTo(W / 2, H * 0.10);
+  x.bezierCurveTo(W * 0.72, H * 0.40, W * 0.78, H * 0.68, W / 2, H * 0.90);
+  x.bezierCurveTo(W * 0.22, H * 0.68, W * 0.28, H * 0.40, W / 2, H * 0.10);
+  x.fill();
+  x.globalCompositeOperation = 'lighter';
+  const g2 = x.createRadialGradient(W / 2, H * 0.72, 1, W / 2, H * 0.70, W * 0.28);
+  g2.addColorStop(0, 'rgba(255,255,255,0.95)');
+  g2.addColorStop(0.5, 'rgba(200,230,255,0.35)');
+  g2.addColorStop(1, 'rgba(160,200,255,0)');
+  x.fillStyle = g2;
+  x.beginPath();
+  x.ellipse(W / 2, H * 0.72, W * 0.18, H * 0.16, 0, 0, Math.PI * 2);
+  x.fill();
+  return topTexture(c);
+}
+function makeGlowSprite(color) {
+  const S = 128;
+  const c = makeCanvas(S, S);
+  const x = c.getContext('2d');
+  const g = x.createRadialGradient(S / 2, S / 2, 0, S / 2, S / 2, S / 2);
+  g.addColorStop(0, color + '0.95)');
+  g.addColorStop(0.22, color + '0.55)');
+  g.addColorStop(0.55, color + '0.15)');
+  g.addColorStop(1, color + '0)');
+  x.fillStyle = g; x.fillRect(0, 0, S, S);
+  return topTexture(c);
+}
+function makeSparkleSprite() {
+  const S = 64;
+  const c = makeCanvas(S, S);
+  const x = c.getContext('2d');
+  const g = x.createRadialGradient(S / 2, S / 2, 0, S / 2, S / 2, S / 2);
+  g.addColorStop(0, 'rgba(255,248,220,1)');
+  g.addColorStop(0.25, 'rgba(255,222,150,0.75)');
+  g.addColorStop(0.6, 'rgba(255,196,100,0.18)');
+  g.addColorStop(1, 'rgba(255,196,100,0)');
+  x.fillStyle = g; x.fillRect(0, 0, S, S);
+  return topTexture(c);
+}
+
+/* --------------------------- theme textures ----------------------------- */
+const themeTextures = new Map();
+const bumpTextures = {
+  lowerSide: null,
+  upperSide: null,
+  lowerTop: null,
+  upperTop: null,
+};
+const normalTextures = {
+  lowerSide: null,
+  upperSide: null,
+  lowerTop: null,
+  upperTop: null,
+};
+
+function makeNormalFromCanvas(src, strength = 3.2) {
+  const W = src.width, H = src.height;
+  const sctx = src.getContext('2d', { willReadFrequently: true });
+  const s = sctx.getImageData(0, 0, W, H).data;
+  const out = makeCanvas(W, H);
+  const octx = out.getContext('2d');
+  const img = octx.createImageData(W, H);
+  const height = (x, y) => {
+    x = (x + W) % W; y = Math.max(0, Math.min(H - 1, y));
+    return s[(y * W + x) * 4];
+  };
+  for (let y = 0; y < H; y++) {
+    for (let x = 0; x < W; x++) {
+      const dx = (height(x + 1, y) - height(x - 1, y)) / 255;
+      const dy = (height(x, y + 1) - height(x, y - 1)) / 255;
+      let nx = -dx * strength;
+      let ny = -dy * strength;
+      let nz = 1.0;
+      const len = Math.sqrt(nx * nx + ny * ny + nz * nz) || 1;
+      nx /= len; ny /= len; nz /= len;
+      const i = (y * W + x) * 4;
+      img.data[i] = Math.round((nx * 0.5 + 0.5) * 255);
+      img.data[i + 1] = Math.round((ny * 0.5 + 0.5) * 255);
+      img.data[i + 2] = Math.round((nz * 0.5 + 0.5) * 255);
+      img.data[i + 3] = 255;
+    }
+  }
+  octx.putImageData(img, 0, 0);
+  return out;
+}
+
+function buildBumpTextures() {
+  if (bumpTextures.lowerSide) return;
+  const canvases = {
+    lowerSide: paintBump(LAYOUTS.lowerSide, false),
+    upperSide: paintBump(LAYOUTS.upperSide, false),
+    lowerTop: paintBump(LAYOUTS.lowerTop, true),
+    upperTop: paintBump(LAYOUTS.upperTop, true),
+  };
+  for (const key of Object.keys(canvases)) {
+    const isTop = key.endsWith('Top');
+    bumpTextures[key] = isTop ? topTexture(canvases[key], false) : canvasTexture(canvases[key], false);
+    const nrm = isTop ? topTexture(makeNormalFromCanvas(canvases[key], 3.4), false) : canvasTexture(makeNormalFromCanvas(canvases[key], 3.4), false);
+    nrm.wrapS = isTop ? THREE.ClampToEdgeWrapping : THREE.RepeatWrapping;
+    nrm.wrapT = THREE.ClampToEdgeWrapping;
+    normalTextures[key] = nrm;
+  }
+}
+
+function buildThemeTextures(idx) {
+  const theme = THEMES[idx];
+  if (themeTextures.has(theme.id)) return themeTextures.get(theme.id);
+  const pack = {
+    lowerSide: canvasTexture(paintSideCanvas(LAYOUTS.lowerSide, theme, 'lower')),
+    upperSide: canvasTexture(paintSideCanvas(LAYOUTS.upperSide, theme, 'upper')),
+    lowerTop: topTexture(paintTopCanvas(LAYOUTS.lowerTop, theme, 'lower')),
+    upperTop: topTexture(paintTopCanvas(LAYOUTS.upperTop, theme, 'upper')),
+  };
+  themeTextures.set(theme.id, pack);
+  return pack;
+}
+
+/* texture caches for filling + candle + sprites */
+const fillTextures = { upper: null, lower: null };
+function buildFillTextures() {
+  if (!fillTextures.upper) fillTextures.upper = makeFillingTextures('upper');
+  if (!fillTextures.lower) fillTextures.lower = makeFillingTextures('lower');
+  return fillTextures;
+}
+
+/* ============================================================================
+ * 奶油花园 · PART 2 — cake bodies, roses, shells, piping, leaves, pearls
+ * ========================================================================== */
+
+/* ------------------------- shared materials ----------------------------- */
+const MATS = {
+  cream: null,
+  leaf: null,
+  roses: [],
+  pearl: null,
+  board: null,
+};
+const bodyBindings = [];
+const creamBindings = [];
+
+function makeBodyMaterial(surface) {
+  const pack = themeTextures.get(currentTheme().id) || buildThemeTextures(0);
+  const map = pack[surface];
+  const bump = bumpTextures[surface];
+  const mat = new THREE.MeshStandardMaterial({
+    map,
+    bumpMap: bump,
+    bumpScale: surface.endsWith('Top') ? 0.012 : 0.028,
+    normalMap: normalTextures[surface],
+    normalScale: new THREE.Vector2(surface.endsWith('Top') ? 0.50 : 0.80, surface.endsWith('Top') ? 0.50 : 0.80),
+    displacementMap: surface.endsWith('Top') ? null : bump,
+    displacementScale: surface.endsWith('Top') ? 0 : 0.055,
+    displacementBias: surface.endsWith('Top') ? 0 : -0.0275,
+    roughness: 0.82,
+    metalness: 0.015,
+    color: 0xffffff,
+    envMapIntensity: 0.38,
+  });
+  const uniforms = { uTexA: { value: map }, uTexB: { value: map }, uMix: { value: 0 } };
+  mat.userData.crossfade = uniforms;
+  mat.onBeforeCompile = (shader) => {
+    shader.uniforms.uTexA = uniforms.uTexA;
+    shader.uniforms.uTexB = uniforms.uTexB;
+    shader.uniforms.uMix = uniforms.uMix;
+    shader.fragmentShader =
+      'uniform sampler2D uTexA;\nuniform sampler2D uTexB;\nuniform float uMix;\n' + shader.fragmentShader;
+    shader.fragmentShader = shader.fragmentShader.replace(
+      '#include <map_fragment>',
+      [
+        '#ifdef USE_MAP',
+        '  vec4 sampledDiffuseColor = mix( texture2D( uTexA, vMapUv ), texture2D( uTexB, vMapUv ), uMix );',
+        '  diffuseColor *= sampledDiffuseColor;',
+        '#endif',
+      ].join('\n')
+    );
+  };
+  mat.customProgramCacheKey = () => 'buttercream-crossfade';
+  bodyBindings.push({ surface, uniforms });
+  return mat;
+}
+
+function initSharedMaterials() {
+  const theme = currentTheme();
+  MATS.cream = new THREE.MeshStandardMaterial({
+    color: new THREE.Color(theme.cream),
+    roughness: 0.58,
+    metalness: 0.0,
+    vertexColors: true,
+    envMapIntensity: 0.42,
+  });
+  MATS.creamSolid = new THREE.MeshStandardMaterial({
+    color: new THREE.Color(theme.cream),
+    roughness: 0.50,
+    metalness: 0.0,
+    envMapIntensity: 0.48,
+  });
+  MATS.leaf = new THREE.MeshStandardMaterial({
+    color: new THREE.Color(theme.leaf),
+    roughness: 0.62,
+    metalness: 0.0,
+    vertexColors: true,
+    side: THREE.DoubleSide,
+    envMapIntensity: 0.30,
+  });
+  MATS.roses = theme.roses.map((hex) => new THREE.MeshStandardMaterial({
+    color: new THREE.Color(hex),
+    roughness: 0.58,
+    metalness: 0.0,
+    vertexColors: true,
+    envMapIntensity: 0.45,
+  }));
+  MATS.pearl = new THREE.MeshPhysicalMaterial({
+    color: 0xfffdf8,
+    roughness: 0.13,
+    metalness: 0.0,
+    clearcoat: 1.0,
+    clearcoatRoughness: 0.06,
+    envMapIntensity: 1.35,
+    iridescence: 0.22,
+    iridescenceIOR: 1.32,
+    sheen: 0.30,
+    sheenColor: new THREE.Color(0xf7e6dd),
+    sheenRoughness: 0.5,
+  });
+  MATS.board = new THREE.MeshPhysicalMaterial({
+    color: 0xfbf9f5,
+    roughness: 0.30,
+    metalness: 0.02,
+    clearcoat: 0.55,
+    clearcoatRoughness: 0.25,
+    envMapIntensity: 0.7,
+  });
+  creamBindings.push(MATS.cream, MATS.creamSolid);
+}
+
+/* ------------------------------ tier body -------------------------------- */
+function remapSideUV(geo, v0, v1) {
+  const uv = geo.attributes.uv;
+  for (let i = 0; i < uv.count; i++) uv.setY(i, v0 + uv.getY(i) * (v1 - v0));
+  uv.needsUpdate = true;
+}
+
+function buildTier(opts) {
+  const { radius, height, y, isUpper } = opts;
+  const group = new THREE.Group();
+  group.position.y = y;
+  const hLow = height * CFG.split;
+  const hFill = Math.min(CFG.fillH, height * 0.18);
+  const hUp = height - hLow;
+  const fill = buildFillTextures();
+
+  const sideMat = makeBodyMaterial(isUpper ? 'upperSide' : 'lowerSide');
+  const topMat = makeBodyMaterial(isUpper ? 'upperTop' : 'lowerTop');
+  const cutMat = new THREE.MeshStandardMaterial({
+    map: fill[isUpper ? 'upper' : 'lower'].cut,
+    roughness: 0.88,
+    metalness: 0.0,
+    envMapIntensity: 0.25,
+  });
+
+  /* lower half ------------------------------------------------------------ */
+  const segR = isMobile ? 160 : 240;
+  const segH = isMobile ? 36 : 52;
+  const lowerGeo = new THREE.CylinderGeometry(radius, radius * 1.004, hLow, segR, segH, true);
+  remapSideUV(lowerGeo, 0, CFG.split);
+  const lowerMesh = new THREE.Mesh(lowerGeo, sideMat);
+  lowerMesh.position.y = hLow * 0.5;
+  lowerMesh.castShadow = true;
+  lowerMesh.receiveShadow = true;
+  lowerMesh.userData.pick = true;
+  group.add(lowerMesh);
+
+  /* hidden filling band --------------------------------------------------- */
+  const fillSideMat = new THREE.MeshStandardMaterial({
+    map: fill[isUpper ? 'upper' : 'lower'].side,
+    roughness: 0.72,
+    metalness: 0.0,
+    envMapIntensity: 0.3,
+  });
+  const fillTopMat = new THREE.MeshStandardMaterial({
+    map: fill[isUpper ? 'upper' : 'lower'].cut,
+    roughness: 0.78,
+    metalness: 0.0,
+    envMapIntensity: 0.3,
+  });
+  const fillBottomMat = new THREE.MeshStandardMaterial({
+    color: new THREE.Color(isUpper ? '#d9c1a2' : '#cbb7d6'),
+    roughness: 0.9,
+  });
+  const fillGeo = new THREE.CylinderGeometry(radius * 0.952, radius * 0.952, hFill, 128, 1, false);
+  const fillMesh = new THREE.Mesh(fillGeo, [fillSideMat, fillTopMat, fillBottomMat]);
+  fillMesh.position.y = hLow + hFill * 0.5;
+  fillMesh.castShadow = false;
+  fillMesh.receiveShadow = true;
+  group.add(fillMesh);
+
+  // crisp jam & cream strata around the cut, visible only when exploded
+  const jamRing = new THREE.Mesh(
+    new THREE.TorusGeometry(radius * 0.9535, 0.0085, 8, 140),
+    new THREE.MeshStandardMaterial({
+      color: new THREE.Color(isUpper ? '#7f3341' : '#423252'),
+      roughness: 0.28, metalness: 0.0, envMapIntensity: 0.7,
+    })
+  );
+  jamRing.rotation.x = Math.PI / 2;
+  jamRing.position.y = hLow + hFill * 0.34;
+  group.add(jamRing);
+  const creamRing = new THREE.Mesh(
+    new THREE.TorusGeometry(radius * 0.9535, 0.0065, 8, 140),
+    new THREE.MeshStandardMaterial({ color: 0xd7c5ae, roughness: 0.72, metalness: 0.0 })
+  );
+  creamRing.rotation.x = Math.PI / 2;
+  creamRing.position.y = hLow + hFill * 0.76;
+  group.add(creamRing);
+
+  /* upper half (animatable) ---------------------------------------------- */
+  const upperGroup = new THREE.Group();
+  const upGeo = new THREE.CylinderGeometry(radius, radius, hUp, segR, segH, true);
+  remapSideUV(upGeo, CFG.split, 1);
+  const upMesh = new THREE.Mesh(upGeo, sideMat);
+  upMesh.position.y = hLow + hUp * 0.5;
+  upMesh.castShadow = true;
+  upMesh.receiveShadow = true;
+  upMesh.userData.pick = true;
+  upperGroup.add(upMesh);
+
+  // top painted disc
+  const discGeo = new THREE.CircleGeometry(radius * 0.998, 160);
+  discGeo.rotateX(-Math.PI / 2);
+  const disc = new THREE.Mesh(discGeo, topMat);
+  disc.position.y = height + 0.003;
+  disc.receiveShadow = true;
+  disc.userData.pick = true;
+  disc.userData.topSurface = true;
+  upperGroup.add(disc);
+
+  // creamy rim around the top edge
+  const rimGeo = new THREE.TorusGeometry(radius - 0.018, 0.032, 14, 160);
+  rimGeo.rotateX(Math.PI / 2);
+  const rim = new THREE.Mesh(rimGeo, MATS.creamSolid);
+  rim.position.y = height;
+  rim.castShadow = true;
+  rim.receiveShadow = true;
+  upperGroup.add(rim);
+
+  // cut face under the upper half, only visible in exploded view
+  const capGeo = new THREE.CircleGeometry(radius * 0.985, 128);
+  capGeo.rotateX(Math.PI / 2);
+  const cutCap = new THREE.Mesh(capGeo, cutMat);
+  cutCap.position.y = hLow + 0.002;
+  cutCap.receiveShadow = true;
+  upperGroup.add(cutCap);
+
+  // soft bottom rim for the upper half
+  const bottomRimGeo = new THREE.TorusGeometry(radius - 0.022, 0.024, 12, 140);
+  bottomRimGeo.rotateX(Math.PI / 2);
+  const bottomRim = new THREE.Mesh(bottomRimGeo, MATS.creamSolid);
+  bottomRim.position.y = hLow;
+  bottomRim.castShadow = true;
+  upperGroup.add(bottomRim);
+
+  group.add(upperGroup);
+
+  group.userData = {
+    radius, height, hLow, hFill, hUp,
+    lowerMesh, upperGroup, fillMesh, disc, rim,
+    isUpper,
+  };
+  return group;
+}
+
+/* --------------------------- buttercream rose --------------------------- */
+function makeBandGeometry(o) {
+  const {
+    r, h, tilt, arc, phase, seed,
+    thick = 0.013, rows = 7, cols = 22,
+  } = o;
+  const rng = mulberry32(seed * 733 + 17);
+  const fpos = [], bpos = [], col = [];
+  const ROWS = rows, COLS = cols;
+  const baseShade = 0.94 + rng() * 0.05;
+  for (let i = 0; i <= ROWS; i++) {
+    const t = i / ROWS;
+    for (let j = 0; j <= COLS; j++) {
+      const s = j / COLS;
+      const th = phase + (s - 0.5) * arc;
+      const edge = Math.pow(Math.abs(2 * s - 1), 2);
+      const lobe = Math.sin(s * Math.PI * 3.1 + phase * 1.7);
+      const ruffle = 0.030 * lobe * Math.pow(t, 2.7);
+      const cup = 0.042 * edge * Math.pow(t, 1.25);
+      const bulge = 0.020 * Math.sin(Math.PI * s) * Math.pow(t, 1.5);
+      const roll = smoothstep(0.86, 1, t);
+      const y = t * h * (1 - 0.16 * edge * t) - 0.026 * roll + 0.010 * lobe * Math.pow(t, 3);
+      const rad = r + Math.sin(tilt) * h * Math.pow(t, 1.30) + ruffle - cup - 0.045 * edge * Math.pow(t, 1.5) + bulge + 0.014 * roll;
+      const nx = Math.sin(th), nz = Math.cos(th);
+      const half = thick * 0.5;
+      fpos.push(nx * (rad + half), y, nz * (rad + half));
+      bpos.push(nx * (rad - half), y - 0.001, nz * (rad - half));
+      const sh = baseShade + 0.36 * Math.pow(t, 1.25) - 0.035 * edge + 0.018 * lobe;
+      col.push(sh, sh, sh);
+    }
+  }
+  const N = (ROWS + 1) * (COLS + 1);
+  const idx = [];
+  const C = COLS + 1;
+  for (let i = 0; i < ROWS; i++) {
+    for (let j = 0; j < COLS; j++) {
+      const a = i * C + j, b = a + 1, c = a + C, d = c + 1;
+      idx.push(a, c, b, b, c, d);
+      idx.push(N + a, N + b, N + c, N + b, N + d, N + c);
+    }
+  }
+  // top / bottom rims
+  for (let j = 0; j < COLS; j++) {
+    const a = ROWS * C + j, b = a + 1;
+    idx.push(a, N + a, b, b, N + a, N + b);
+    const aa = j, bb = aa + 1;
+    idx.push(N + aa, aa, N + bb, N + bb, aa, bb);
+  }
+  // side rims
+  for (let i = 0; i < ROWS; i++) {
+    const aL = i * C, bL = (i + 1) * C;
+    idx.push(N + aL, aL, N + bL, N + bL, aL, bL);
+    const aR = i * C + COLS, bR = (i + 1) * C + COLS;
+    idx.push(aR, bR, N + aR, N + aR, bR, N + bR);
+  }
+  const geo = new THREE.BufferGeometry();
+  geo.setAttribute('position', new THREE.Float32BufferAttribute([...fpos, ...bpos], 3));
+  geo.setAttribute('color', new THREE.Float32BufferAttribute([...col, ...col], 3));
+  geo.setIndex(idx);
+  geo.computeVertexNormals();
+  return geo;
+}
+
+function makeRoseGeometry(seed) {
+  const rng = mulberry32(seed * 1291 + 5);
+  const count = 23 + Math.floor(rng() * 3);
+  const parts = [];
+  for (let i = 0; i < count; i++) {
+    const t = i / (count - 1);
+    const phase = i * 2.39996323 + (rng() - 0.5) * 0.30;
+    const r = 0.014 + 0.225 * Math.pow(t, 0.94);
+    const h = 0.820 - 0.310 * Math.pow(t, 1.04);
+    const tilt = 0.025 + 0.650 * Math.pow(t, 1.12);
+    const arc = 2.88 - 0.35 * t;
+    parts.push(makeBandGeometry({
+      r, h, tilt, arc, phase,
+      seed: seed * 31 + i,
+      thick: 0.013,
+    }));
+  }
+  // low skirt petals that fold outwards and hide the cup wall
+  for (let k = 0; k < 5; k++) {
+    parts.push(makeBandGeometry({
+      r: 0.215 + rng() * 0.02,
+      h: 0.215 + rng() * 0.03,
+      tilt: 1.02 + rng() * 0.12,
+      arc: 2.25 + rng() * 0.2,
+      phase: k * 1.256 + rng() * 0.4,
+      seed: seed * 71 + 50 + k,
+      thick: 0.015,
+    }));
+  }
+
+  // snug centre bud
+  const bud = new THREE.ConeGeometry(0.074, 0.28, 18, 4, false);
+  bud.translate(0, 0.44, 0);
+  bud.deleteAttribute('uv');
+  const bp = bud.attributes.position;
+  const bc = new Float32Array(bp.count * 3);
+  for (let i = 0; i < bp.count; i++) { bc[i * 3] = 0.92; bc[i * 3 + 1] = 0.92; bc[i * 3 + 2] = 0.92; }
+  bud.setAttribute('color', new THREE.BufferAttribute(bc, 3));
+  parts.push(bud);
+  const tip = new THREE.SphereGeometry(0.048, 14, 10);
+  tip.translate(0, 0.575, 0);
+  tip.deleteAttribute('uv');
+  const tp = tip.attributes.position;
+  const tc = new Float32Array(tp.count * 3);
+  for (let i = 0; i < tp.count; i++) { tc[i * 3] = 1.05; tc[i * 3 + 1] = 1.05; tc[i * 3 + 2] = 1.05; }
+  tip.setAttribute('color', new THREE.BufferAttribute(tc, 3));
+  parts.push(tip);
+
+  const merged = mergeGeometries(parts, false);
+  if (!merged) throw new Error('rose merge failed');
+  merged.computeBoundingBox();
+  const size = new THREE.Vector3();
+  merged.boundingBox.getSize(size);
+  const k = 1 / Math.max(size.x, size.z);
+  merged.scale(k, k, k);
+  merged.computeBoundingBox();
+  merged.translate(0, -merged.boundingBox.min.y, 0);
+  merged.computeVertexNormals();
+  return merged;
+}
+
+const ROSE_GEOMETRIES = [];
+
+/* ------------------------------ fan shells ------------------------------ */
+function makeShellGeometry(seed = 1) {
+  const rng = mulberry32(seed * 311 + 9);
+  const n = 7, L = 0.55, spread = 2.05, tilt = 0.17, flat = 0.55;
+  const parts = [];
+  for (let k = 0; k < n; k++) {
+    const u = (k / (n - 1)) * 2 - 1;
+    const ang = u * spread * 0.5;
+    const rr = (0.068 + rng() * 0.008) * (1 - 0.08 * Math.abs(u));
+    const lmax = L * (1 - 0.075 * u * u) * (0.97 + rng() * 0.06);
+    const leng = Math.max(0.06, lmax - 2 * rr);
+    const g = new THREE.CapsuleGeometry(rr, leng, 7, 16);
+    g.scale(1, 1, flat);
+    const dir = new THREE.Vector3(Math.sin(ang), Math.cos(ang), 0);
+    dir.applyAxisAngle(new THREE.Vector3(1, 0, 0), tilt);
+    const pos = dir.clone().multiplyScalar(lmax * 0.5);
+    const m = new THREE.Matrix4().makeRotationZ(-ang);
+    m.multiply(new THREE.Matrix4().makeRotationX(tilt));
+    const tr = new THREE.Matrix4().makeTranslation(pos.x, pos.y, pos.z);
+    tr.multiply(m);
+    g.applyMatrix4(tr);
+    g.deleteAttribute('uv');
+    const p = g.attributes.position;
+    const cols = new Float32Array(p.count * 3);
+    for (let i = 0; i < p.count; i++) {
+      const yy = clamp(p.getY(i) / L, 0, 1);
+      const sh = 0.78 + 0.26 * Math.pow(yy, 0.8) + (rng() - 0.5) * 0.03;
+      cols[i * 3] = sh; cols[i * 3 + 1] = sh; cols[i * 3 + 2] = sh;
+    }
+    g.setAttribute('color', new THREE.BufferAttribute(cols, 3));
+    parts.push(g);
+  }
+  // hinge dollop
+  const base = new THREE.SphereGeometry(0.105, 18, 12);
+  base.scale(1.45, 0.72, 0.85);
+  base.translate(0, 0.058, 0.015);
+  base.deleteAttribute('uv');
+  const bp = base.attributes.position;
+  const bcol = new Float32Array(bp.count * 3);
+  for (let i = 0; i < bp.count; i++) { bcol[i * 3] = 0.76; bcol[i * 3 + 1] = 0.76; bcol[i * 3 + 2] = 0.76; }
+  base.setAttribute('color', new THREE.BufferAttribute(bcol, 3));
+  parts.push(base);
+  const merged = mergeGeometries(parts, false);
+  merged.computeVertexNormals();
+  return merged;
+}
+const SHELL_GEOMETRY = makeShellGeometry(7);
+
+/* ------------------------------- rope piping ---------------------------- */
+function makeRopeRingGeometry(radius, y, tube, ribs, waveAmp, waveFreq, segments = 320) {
+  const pos = [], col = [], idx = [];
+  const radial = new THREE.Vector3();
+  const up = new THREE.Vector3(0, 1, 0);
+  for (let i = 0; i <= segments; i++) {
+    const a = (i / segments) * Math.PI * 2;
+    const wr = y + waveAmp * Math.sin(a * waveFreq);
+    const cx = Math.sin(a) * radius;
+    const cz = Math.cos(a) * radius;
+    radial.set(Math.sin(a), 0, Math.cos(a));
+    for (let j = 0; j <= 10; j++) {
+      const phi = (j / 10) * Math.PI * 2;
+      const rr = tube * (1 + 0.17 * Math.cos(ribs * phi + a * 9.0));
+      const px = cx + radial.x * Math.cos(phi) * rr;
+      const pz = cz + radial.z * Math.cos(phi) * rr;
+      const py = wr + Math.sin(phi) * rr;
+      pos.push(px, py, pz);
+      const sh = 0.82 + 0.16 * Math.cos(phi) + 0.05 * Math.sin(phi * 3);
+      col.push(sh, sh, sh);
+    }
+  }
+  const C = 11;
+  for (let i = 0; i < segments; i++) {
+    for (let j = 0; j < 10; j++) {
+      const a = i * C + j, b = a + 1, c = a + C, d = c + 1;
+      idx.push(a, c, b, b, c, d);
+    }
+  }
+  const g = new THREE.BufferGeometry();
+  g.setAttribute('position', new THREE.Float32BufferAttribute(pos, 3));
+  g.setAttribute('color', new THREE.Float32BufferAttribute(col, 3));
+  g.setIndex(idx);
+  g.computeVertexNormals();
+  return g;
+}
+
+/* --------------------------------- leaves ------------------------------- */
+function makeLeafGeometry(seed) {
+  const rng = mulberry32(seed * 67 + 3);
+  const shape = new THREE.Shape();
+  shape.moveTo(0, 0);
+  shape.bezierCurveTo(0.055, 0.02, 0.105, 0.11, 0.115, 0.23);
+  shape.bezierCurveTo(0.125, 0.33, 0.07, 0.42, 0, 0.45);
+  shape.bezierCurveTo(-0.07, 0.42, -0.125, 0.33, -0.115, 0.23);
+  shape.bezierCurveTo(-0.105, 0.11, -0.055, 0.02, 0, 0);
+  const g = new THREE.ExtrudeGeometry(shape, {
+    depth: 0.012, bevelEnabled: true, bevelThickness: 0.006,
+    bevelSize: 0.008, bevelSegments: 1, curveSegments: 8, steps: 1,
+  });
+  g.translate(0, 0, -0.006);
+  const p = g.attributes.position;
+  for (let i = 0; i < p.count; i++) {
+    const x = p.getX(i), y = p.getY(i), z = p.getZ(i);
+    const t = clamp(y / 0.45, 0, 1);
+    p.setXYZ(i, x * (1 - 0.06 * t), y, z + 0.14 * x * x + 0.055 * Math.pow(t, 2.2) + 0.01 * Math.sin(x * 30));
+  }
+  g.deleteAttribute('uv');
+  g.computeVertexNormals();
+  const col = new Float32Array(p.count * 3);
+  for (let i = 0; i < p.count; i++) {
+    const yy = clamp(p.getY(i) / 0.45, 0, 1);
+    const sh = 0.72 + 0.33 * yy + (rng() - 0.5) * 0.05;
+    col[i * 3] = sh; col[i * 3 + 1] = sh; col[i * 3 + 2] = sh;
+  }
+  g.setAttribute('color', new THREE.BufferAttribute(col, 3));
+  g.rotateX(-Math.PI / 2);
+  return g;
+}
+const LEAF_GEOMETRY = makeLeafGeometry(21);
+
+/* ------------------------------ pearls ---------------------------------- */
+const PEARL_SPHERE = new THREE.SphereGeometry(1, 20, 14);
+function makePearlMesh(placements, parent) {
+  if (!placements.length) return null;
+  const mesh = new THREE.InstancedMesh(PEARL_SPHERE, MATS.pearl, placements.length);
+  const dummy = new THREE.Object3D();
+  const color = new THREE.Color();
+  for (let i = 0; i < placements.length; i++) {
+    const p = placements[i];
+    dummy.position.set(p.x, p.y, p.z);
+    dummy.scale.setScalar(p.s);
+    dummy.rotation.set(0, 0, 0);
+    dummy.updateMatrix();
+    mesh.setMatrixAt(i, dummy.matrix);
+    const warm = 0.97 + Math.random() * 0.03;
+    color.setRGB(1, warm, 0.985);
+    mesh.setColorAt(i, color);
+  }
+  mesh.instanceMatrix.needsUpdate = true;
+  if (mesh.instanceColor) mesh.instanceColor.needsUpdate = true;
+  mesh.castShadow = true;
+  mesh.receiveShadow = false;
+  parent.add(mesh);
+  return mesh;
+}
+
+/* ------------------------------- candle --------------------------------- */
+function buildCandle() {
+  const group = new THREE.Group();
+  const candleTex = makeCandleTexture();
+  const bodyMat = new THREE.MeshStandardMaterial({
+    map: candleTex, roughness: 0.62, metalness: 0.03, envMapIntensity: 0.45,
+  });
+  const body = new THREE.Mesh(new THREE.CylinderGeometry(0.044, 0.052, 0.72, 32, 10), bodyMat);
+  body.position.y = 0.36;
+  body.castShadow = true;
+  body.receiveShadow = true;
+  group.add(body);
+
+  const base = new THREE.Mesh(
+    new THREE.CylinderGeometry(0.095, 0.11, 0.022, 32),
+    new THREE.MeshStandardMaterial({ color: 0xf2e7d6, roughness: 0.55, metalness: 0.05 })
+  );
+  base.position.y = 0.011;
+  base.castShadow = true;
+  group.add(base);
+
+  const wick = new THREE.Mesh(
+    new THREE.CylinderGeometry(0.0045, 0.0045, 0.065, 8),
+    new THREE.MeshStandardMaterial({ color: 0x2b2420, roughness: 0.9 })
+  );
+  wick.position.y = 0.72 + 0.028;
+  group.add(wick);
+
+  const flameMat = new THREE.SpriteMaterial({
+    map: makeFlameSprite(), color: 0xffffff, transparent: true,
+    blending: THREE.AdditiveBlending, depthWrite: false, depthTest: true,
+  });
+  const flame = new THREE.Sprite(flameMat);
+  flame.scale.set(0.205, 0.43, 1);
+  flame.position.y = 0.72 + 0.15;
+  group.add(flame);
+
+  const glowMat = new THREE.SpriteMaterial({
+    map: makeGlowSprite('rgba(255,182,96,'), color: 0xffc07a, transparent: true,
+    blending: THREE.AdditiveBlending, depthWrite: false, opacity: 0.45,
+  });
+  const glow = new THREE.Sprite(glowMat);
+  glow.scale.set(0.9, 0.9, 1);
+  glow.position.y = 0.82;
+  group.add(glow);
+
+  const light = new THREE.PointLight(0xffb25e, 0, 7.0, 2.0);
+  light.position.y = 0.92;
+  group.add(light);
+
+  group.visible = false;
+  return { group, flame, glow, light, body, base, wick };
+}
+
+/* ---------------------------- small helpers ----------------------------- */
+function composeMeshGeo(baseGeo, position, rotation, scale) {
+  const g = baseGeo.clone();
+  const m = new THREE.Matrix4();
+  const q = new THREE.Quaternion().setFromEuler(rotation);
+  m.compose(position, q, scale);
+  g.applyMatrix4(m);
+  return g;
+}
+
+/* ============================================================================
+ * 奶油花园 · PART 3 — studio stage, cake assembly, decoration layout
+ * ========================================================================== */
+
+/* ------------------------------ renderer -------------------------------- */
+const canvas = $('#scene');
+const renderer = new THREE.WebGLRenderer({
+  canvas, antialias: true, alpha: true, powerPreference: 'high-performance',
+});
+const DPR = Math.min(window.devicePixelRatio || 1, isMobile ? 1.6 : 1.8);
+renderer.setPixelRatio(DPR);
+renderer.setSize(window.innerWidth, window.innerHeight);
+renderer.outputColorSpace = THREE.SRGBColorSpace;
+renderer.toneMapping = THREE.ACESFilmicToneMapping;
+renderer.toneMappingExposure = 0.94;
+renderer.shadowMap.enabled = true;
+renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+
+const scene = new THREE.Scene();
+const camera = new THREE.PerspectiveCamera(34, window.innerWidth / window.innerHeight, 0.1, 120);
+
+/* environment for the pearls / subtle specular life */
+const pmrem = new THREE.PMREMGenerator(renderer);
+pmrem.compileEquirectangularShader();
+let envRT = null;
+try {
+  const room = new RoomEnvironment();
+  envRT = pmrem.fromScene(room, 0.04);
+  scene.environment = envRT.texture;
+  room.dispose && room.dispose();
+} catch (e) {
+  /* studio lights still carry the scene if an environment is unavailable */
+}
+pmrem.dispose();
+
+/* ------------------------------- lights --------------------------------- */
+const hemi = new THREE.HemisphereLight(0xffffff, 0xe7dacd, 0.95);
+scene.add(hemi);
+
+const key = new THREE.DirectionalLight(0xfff4e7, 2.20);
+key.position.set(-6.5, 10.0, 7.5);
+key.target.position.set(0, 2.1, 0);
+key.castShadow = true;
+key.shadow.mapSize.set(isMobile ? 1024 : 2048, isMobile ? 1024 : 2048);
+key.shadow.camera.left = -7.6;
+key.shadow.camera.right = 7.6;
+key.shadow.camera.top = 8.8;
+key.shadow.camera.bottom = -6.0;
+key.shadow.camera.near = 1;
+key.shadow.camera.far = 34;
+key.shadow.bias = -0.00025;
+key.shadow.normalBias = 0.025;
+key.shadow.radius = 5;
+scene.add(key);
+scene.add(key.target);
+
+const fill = new THREE.DirectionalLight(0xdfe9f6, 0.50);
+fill.position.set(6.5, 4.0, 3.0);
+scene.add(fill);
+
+const rim = new THREE.DirectionalLight(0xffffff, 0.52);
+rim.position.set(1.0, 5.0, -7.0);
+scene.add(rim);
+
+const frontFill = new THREE.DirectionalLight(0xfff7ef, 0.58);
+frontFill.position.set(2.0, 3.0, 9.0);
+scene.add(frontFill);
+
+/* ------------------------------- ground --------------------------------- */
+const ground = new THREE.Mesh(
+  new THREE.PlaneGeometry(48, 48),
+  new THREE.ShadowMaterial({ color: 0x8a7a70, opacity: 0.17 })
+);
+ground.rotation.x = -Math.PI / 2;
+ground.position.y = 0;
+ground.receiveShadow = true;
+scene.add(ground);
+
+function makeContactShadow() {
+  const S = 512;
+  const c = makeCanvas(S, S);
+  const x = c.getContext('2d');
+  const g = x.createRadialGradient(S / 2, S / 2, S * 0.08, S / 2, S / 2, S * 0.5);
+  g.addColorStop(0, 'rgba(88,66,55,0.52)');
+  g.addColorStop(0.35, 'rgba(95,73,62,0.26)');
+  g.addColorStop(0.7, 'rgba(105,82,70,0.07)');
+  g.addColorStop(1, 'rgba(105,82,70,0)');
+  x.fillStyle = g;
+  x.fillRect(0, 0, S, S);
+  return topTexture(c);
+}
+const contactMesh = new THREE.Mesh(
+  new THREE.PlaneGeometry(8.4, 8.4),
+  new THREE.MeshBasicMaterial({
+    map: makeContactShadow(), transparent: true, opacity: 0.62,
+    depthWrite: false, toneMapped: false,
+  })
+);
+contactMesh.rotation.x = -Math.PI / 2;
+contactMesh.position.y = 0.003;
+scene.add(contactMesh);
+
+/* ------------------------------ camera rig ------------------------------ */
+const controls = new OrbitControls(camera, renderer.domElement);
+controls.enableDamping = true;
+controls.dampingFactor = 0.055;
+controls.enablePan = false;
+controls.minDistance = 6.4;
+controls.maxDistance = 26;
+controls.minPolarAngle = 0.34;
+controls.maxPolarAngle = 1.47;
+controls.rotateSpeed = 0.62;
+controls.zoomSpeed = 0.8;
+controls.autoRotate = true;
+controls.autoRotateSpeed = 0.55;
+
+function fitCameraTarget(exploded, aspect) {
+  const vfov = (camera.fov * Math.PI) / 180;
+  const needH = exploded ? 10.45 : 6.50;
+  const needW = exploded ? 9.6 : 7.60;
+  const fitH = needH / (2 * Math.tan(vfov / 2));
+  const fitW = needW / (2 * Math.tan(vfov / 2) * aspect);
+  const dist = Math.max(fitH, fitW) * (exploded ? 1.12 : 1.32);
+  const target = new THREE.Vector3(0, exploded ? 3.30 : 2.42, 0);
+  const az = exploded ? 0.16 : 0.36;
+  const el = exploded ? 0.30 : 0.50;
+  const pos = new THREE.Vector3(
+    Math.sin(az) * Math.cos(el) * dist,
+    target.y + Math.sin(el) * dist,
+    Math.cos(az) * Math.cos(el) * dist
+  );
+  return { pos, target, dist };
+}
+
+function setCameraHome(exploded = false, instant = true) {
+  const { pos, target } = fitCameraTarget(exploded, window.innerWidth / window.innerHeight);
+  if (instant) {
+    camera.position.copy(pos);
+    controls.target.copy(target);
+    controls.update();
+  }
+  return { pos, target };
+}
+setCameraHome(false, true);
+
+/* ------------------------------ cake root ------------------------------- */
+const cake = new THREE.Group();
+scene.add(cake);
+
+let board = null;
+let lowerTier = null;
+let upperTier = null;
+let topCrown = null;
+let midRing = null;
+let baseRing = null;
+let candle = null;
+let calloutAnchors = [];
+
+/* ------------------------------ board ----------------------------------- */
+function buildBoard() {
+  const g = new THREE.Group();
+  const top = new THREE.Mesh(
+    new THREE.CylinderGeometry(CFG.boardR, CFG.boardR * 1.004, CFG.boardH, 180, 3),
+    MATS.board
+  );
+  top.position.y = CFG.boardH / 2;
+  top.castShadow = true;
+  top.receiveShadow = true;
+  top.userData.pick = true;
+  g.add(top);
+  const rimGeo = new THREE.TorusGeometry(CFG.boardR - 0.012, 0.022, 12, 160);
+  rimGeo.rotateX(Math.PI / 2);
+  const rim = new THREE.Mesh(rimGeo, MATS.board);
+  rim.position.y = CFG.boardH;
+  rim.castShadow = true;
+  g.add(rim);
+  g.position.y = 0;
+  return g;
+}
+
+/* --------------------------- decoration helpers ------------------------- */
+const decoRng = mulberry32(20261024);
+
+function addRose(group, angle, radius, y, diameter, colorIdx, tilt) {
+  const geo = ROSE_GEOMETRIES[(decoRng() * ROSE_GEOMETRIES.length) | 0];
+  const mesh = new THREE.Mesh(geo, MATS.roses[colorIdx % MATS.roses.length]);
+  const x = Math.sin(angle) * radius;
+  const z = Math.cos(angle) * radius;
+  mesh.position.set(x, y, z);
+  mesh.quaternion.setFromEuler(new THREE.Euler(
+    tilt,
+    angle + (decoRng() - 0.5) * 0.55,
+    (decoRng() - 0.5) * 0.16,
+    'YXZ'
+  ));
+  mesh.scale.set(diameter, diameter * 1.14, diameter);
+  mesh.castShadow = true;
+  mesh.receiveShadow = true;
+  group.add(mesh);
+  return { mesh, x, z, angle, y };
+}
+
+function addLeafCluster(parts, cx, cz, y, angle, scale) {
+  const n = 2 + ((decoRng() * 2) | 0);
+  for (let i = 0; i < n; i++) {
+    const a = angle + (i - (n - 1) / 2) * (0.55 + decoRng() * 0.2);
+    const rr = 0.05 + decoRng() * 0.14;
+    const pos = new THREE.Vector3(
+      cx + Math.sin(a) * rr,
+      y + 0.004 + decoRng() * 0.01,
+      cz + Math.cos(a) * rr
+    );
+    const q = new THREE.Quaternion().setFromEuler(new THREE.Euler(
+      -0.12 - decoRng() * 0.22,
+      a + (decoRng() - 0.5) * 0.5,
+      (decoRng() - 0.5) * 0.25,
+      'YXZ'
+    ));
+    const s = scale * (0.84 + decoRng() * 0.3);
+    const m = new THREE.Matrix4().compose(pos, q, new THREE.Vector3(s, s, s));
+    const g = LEAF_GEOMETRY.clone();
+    g.applyMatrix4(m);
+    parts.push(g);
+  }
+}
+
+function addShellParts(parts, angle, radius, y, scale, lean) {
+  const pos = new THREE.Vector3(Math.sin(angle) * radius, y, Math.cos(angle) * radius);
+  const euler = new THREE.Euler(lean, angle, 0, 'YXZ');
+  const m = new THREE.Matrix4().compose(
+    pos,
+    new THREE.Quaternion().setFromEuler(euler),
+    new THREE.Vector3(scale, scale, scale)
+  );
+  const g = SHELL_GEOMETRY.clone();
+  g.applyMatrix4(m);
+  parts.push(g);
+}
+
+function addCreamMesh(group, parts) {
+  if (!parts.length) return null;
+  const merged = mergeGeometries(parts, false);
+  if (!merged) return null;
+  merged.computeVertexNormals();
+  const mesh = new THREE.Mesh(merged, MATS.cream);
+  mesh.castShadow = true;
+  mesh.receiveShadow = true;
+  group.add(mesh);
+  return mesh;
+}
+
+function addLeafMesh(group, parts) {
+  if (!parts.length) return null;
+  const merged = mergeGeometries(parts, false);
+  if (!merged) return null;
+  merged.computeVertexNormals();
+  const mesh = new THREE.Mesh(merged, MATS.leaf);
+  mesh.castShadow = true;
+  mesh.receiveShadow = true;
+  group.add(mesh);
+  return mesh;
+}
+
+function pearlPositionsRing(count, rMin, rMax, yBase, sMin, sMax, offset = 0) {
+  const out = [];
+  for (let i = 0; i < count; i++) {
+    const a = offset + (i / count) * Math.PI * 2 + (decoRng() - 0.5) * 0.08;
+    const r = rMin + decoRng() * (rMax - rMin);
+    const s = sMin + decoRng() * (sMax - sMin);
+    out.push({ x: Math.sin(a) * r, y: yBase + s, z: Math.cos(a) * r, s });
+  }
+  return out;
+}
+
+/* ------------------------------ top crown ------------------------------- */
+function buildTopCrown(group) {
+  const creamParts = [];
+  const leafParts = [];
+  const pearls = [];
+
+  // vintage fan shells around the rim
+  const shellN = 12;
+  for (let i = 0; i < shellN; i++) {
+    const a = (i / shellN) * Math.PI * 2 + 0.10;
+    addShellParts(creamParts, a, 1.845, 0.012, 0.400, 0.17);
+  }
+  // fluted rope ring under the roses
+  creamParts.push(makeRopeRingGeometry(1.605, 0.035, 0.043, 7, 0.010, 20, 320));
+  addCreamMesh(group, creamParts);
+
+  // ten roses, alternate three shades
+  const roseN = 10;
+  const roseCenters = [];
+  for (let i = 0; i < roseN; i++) {
+    const a = (i / roseN) * Math.PI * 2 + 0.20;
+    const r = 1.515 + (decoRng() - 0.5) * 0.055;
+    const d = 0.615 + decoRng() * 0.055;
+    const color = i % 3;
+    const rose = addRose(group, a, r, 0.026, d, color, 0.22 + decoRng() * 0.08);
+    roseCenters.push(rose);
+    addLeafCluster(leafParts, rose.x, rose.z, 0.018, a, 0.68);
+  }
+  addLeafMesh(group, leafParts);
+
+  // pearls nested between roses
+  for (let i = 0; i < 44; i++) {
+    const a = (i / 44) * Math.PI * 2 + decoRng() * 0.1;
+    const r = 1.56 + decoRng() * 0.17;
+    const s = 0.024 + decoRng() * 0.032;
+    pearls.push({ x: Math.sin(a) * r, y: 0.02 + s, z: Math.cos(a) * r, s });
+  }
+  for (const rc of roseCenters) {
+    for (let k = 0; k < 2; k++) {
+      const a = rc.angle + (decoRng() - 0.5) * 0.55;
+      const rr = 1.48 + decoRng() * 0.16;
+      const s = 0.022 + decoRng() * 0.024;
+      pearls.push({ x: Math.sin(a) * rr, y: 0.025 + s, z: Math.cos(a) * rr, s });
+    }
+  }
+  makePearlMesh(pearls, group);
+
+  // hidden candle lives with the crown
+  candle = buildCandle();
+  candle.group.position.set(0, 0.01, 0);
+  candle.group.visible = false;
+  candle.group.userData.isTop = true;
+  group.add(candle.group);
+
+  group.traverse((o) => { o.userData.isTop = true; });
+}
+
+/* ------------------------------ middle ring ----------------------------- */
+function buildMidRing(group) {
+  const creamParts = [];
+  const leafParts = [];
+  const pearls = [];
+
+  const shellN = 22;
+  for (let i = 0; i < shellN; i++) {
+    const a = (i / shellN) * Math.PI * 2 + 0.05;
+    addShellParts(creamParts, a, 1.995, 0.010, 0.405, 0.05);
+  }
+  for (let i = 0; i < 18; i++) {
+    const a = (i / 18) * Math.PI * 2 + 0.22;
+    addShellParts(creamParts, a, 2.615, 0.008, 0.365, 0.15);
+  }
+  creamParts.push(makeRopeRingGeometry(2.135, 0.025, 0.045, 7, 0.010, 26, 340));
+  creamParts.push(makeRopeRingGeometry(2.60, 0.020, 0.034, 6, 0.008, 24, 320));
+  addCreamMesh(group, creamParts);
+
+  // two generous clusters at the front corners + two quieter at the back
+  const clusters = [
+    { c: 0.96, n: 3, spread: 0.30 },
+    { c: -0.96, n: 3, spread: 0.30 },
+    { c: Math.PI + 0.2, n: 2, spread: 0.26 },
+  ];
+  for (const cl of clusters) {
+    for (let k = 0; k < cl.n; k++) {
+      const t = cl.n === 1 ? 0 : k / (cl.n - 1) - 0.5;
+      const a = cl.c + t * cl.spread + (decoRng() - 0.5) * 0.1;
+      const r = 2.36 + Math.abs(t) * 0.16 + decoRng() * 0.06;
+      const d = 0.585 + decoRng() * 0.07;
+      addRose(group, a, r, 0.018, d, (k + 1) % 3, 0.16 + decoRng() * 0.07);
+      addLeafCluster(leafParts, Math.sin(a) * r, Math.cos(a) * r, 0.014, a, 0.64);
+    }
+  }
+  addLeafMesh(group, leafParts);
+
+  for (let i = 0; i < 52; i++) {
+    const a = decoRng() * Math.PI * 2;
+    const r = 2.12 + decoRng() * 0.50;
+    const s = 0.024 + decoRng() * 0.032;
+    pearls.push({ x: Math.sin(a) * r, y: 0.018 + s, z: Math.cos(a) * r, s });
+  }
+  makePearlMesh(pearls, group);
+}
+
+/* ------------------------------ base ring ------------------------------- */
+function buildBaseRing(group) {
+  const creamParts = [];
+  const leafParts = [];
+  const pearls = [];
+
+  const shellN = 22;
+  for (let i = 0; i < shellN; i++) {
+    const a = (i / shellN) * Math.PI * 2 + 0.14;
+    addShellParts(creamParts, a, 2.80, 0.012, 0.535, 0.18);
+  }
+  creamParts.push(makeRopeRingGeometry(2.87, 0.155, 0.052, 7, 0.020, 28, 360));
+  addCreamMesh(group, creamParts);
+
+  const clusters = [
+    { c: 1.02, n: 2 },
+    { c: -1.02, n: 2 },
+    { c: Math.PI - 0.1, n: 2 },
+  ];
+  for (const cl of clusters) {
+    for (let k = 0; k < cl.n; k++) {
+      const t = cl.n === 1 ? 0 : k / (cl.n - 1) - 0.5;
+      const a = cl.c + t * 0.40 + (decoRng() - 0.5) * 0.08;
+      const r = 2.88 + Math.abs(t) * 0.10 + decoRng() * 0.04;
+      const d = 0.555 + decoRng() * 0.06;
+      addRose(group, a, r, 0.018, d, (k + 2) % 3, 0.32 + decoRng() * 0.10);
+      addLeafCluster(leafParts, Math.sin(a) * r, Math.cos(a) * r, 0.012, a, 0.66);
+    }
+  }
+  addLeafMesh(group, leafParts);
+
+  for (let i = 0; i < 64; i++) {
+    const a = decoRng() * Math.PI * 2;
+    const r = 2.68 + decoRng() * 0.34;
+    const s = 0.024 + decoRng() * 0.042;
+    pearls.push({ x: Math.sin(a) * r, y: 0.012 + s, z: Math.cos(a) * r, s });
+  }
+  makePearlMesh(pearls, group);
+}
+
+/* ------------------------------- build all ------------------------------ */
+function buildCakeWorld() {
+  // rose geometry library
+  if (!ROSE_GEOMETRIES.length) {
+    for (let i = 0; i < 5; i++) ROSE_GEOMETRIES.push(makeRoseGeometry(40 + i * 7));
+  }
+  buildBumpTextures();
+  buildThemeTextures(0);
+  buildFillTextures();
+  initSharedMaterials();
+
+  board = buildBoard();
+  cake.add(board);
+
+  lowerTier = buildTier({ radius: CFG.lowerR, height: CFG.lowerH, y: CFG.boardH, isUpper: false });
+  cake.add(lowerTier);
+
+  upperTier = buildTier({ radius: CFG.upperR, height: CFG.upperH, y: CFG.lowerTop, isUpper: true });
+  cake.add(upperTier);
+
+  topCrown = new THREE.Group();
+  topCrown.position.y = CFG.upperTop;
+  buildTopCrown(topCrown);
+  cake.add(topCrown);
+
+  midRing = new THREE.Group();
+  midRing.position.y = CFG.lowerTop;
+  buildMidRing(midRing);
+  cake.add(midRing);
+
+  baseRing = new THREE.Group();
+  baseRing.position.y = CFG.boardH;
+  buildBaseRing(baseRing);
+  cake.add(baseRing);
+
+  // anchors for exploded-view callouts
+  calloutAnchors = [];
+  const a0 = new THREE.Object3D();
+  a0.position.set(Math.sin(0.55) * 2.35, 1.10, Math.cos(0.55) * 2.35);
+  lowerTier.add(a0);
+  calloutAnchors.push(a0);
+
+  const a1 = new THREE.Object3D();
+  a1.position.set(Math.sin(0.85) * 1.40, 0.42, Math.cos(0.85) * 1.40);
+  topCrown.add(a1);
+  calloutAnchors.push(a1);
+
+  const a2 = new THREE.Object3D();
+  a2.position.set(Math.sin(0.50) * 2.62, 0.36, Math.cos(0.50) * 2.62);
+  baseRing.add(a2);
+  calloutAnchors.push(a2);
+
+  const a3 = new THREE.Object3D();
+  a3.position.set(Math.sin(0.30) * 1.48, upperTier.userData.hLow + 0.08, Math.cos(0.30) * 1.48);
+  upperTier.add(a3);
+  calloutAnchors.push(a3);
+
+  // tag pickable / top objects
+  cake.traverse((o) => {
+    if (o.isMesh) {
+      o.castShadow = true;
+      o.receiveShadow = true;
+    }
+  });
+  topCrown.traverse((o) => { o.userData.isTop = true; });
+  upperTier.userData.disc && (upperTier.userData.disc.userData.isTop = true);
+
+  // petals + firework systems are built after materials exist
+  buildPetalSystem();
+  buildFireworks();
+  buildDust();
+}
+
+/* ============================================================================
+ * 奶油花园 · PART 4 — petals, candle, fireworks, exploded view, UI, boot
+ * ========================================================================== */
+
+const state = {
+  exploded: false,
+  candle: 'off',          // off | lit | out
+  autoRotate: !window.matchMedia('(prefers-reduced-motion: reduce)').matches,
+  petals: !window.matchMedia('(prefers-reduced-motion: reduce)').matches,
+  themeBusy: false,
+  cardOpen: false,
+  loaded: false,
+};
+const raycaster = new THREE.Raycaster();
+const pointerNDC = new THREE.Vector2();
+const pointerWorld = new THREE.Vector3();
+const pointerInside = { x: 0, y: 0, active: false };
+
+/* --------------------------- floating petals ---------------------------- */
+let petalSystem = null;
+const PETAL_COUNT = isMobile ? 320 : 600;
+
+function makePetalParticleGeometry() {
+  const rows = 4, cols = 3;
+  const pos = [], idx = [];
+  for (let iy = 0; iy <= rows; iy++) {
+    const v = iy / rows;
+    const half = 0.34 * Math.pow(Math.sin(Math.PI * Math.pow(v, 0.82)), 0.62);
+    for (let ix = 0; ix <= cols; ix++) {
+      const u = (ix / cols) * 2 - 1;
+      const x = u * half;
+      const y = v * 0.95;
+      const z = 0.20 * u * u + 0.05 * Math.sin(Math.PI * v) + 0.02 * Math.cos(u * 3);
+      pos.push(x, y, z);
+    }
+  }
+  const C = cols + 1;
+  for (let iy = 0; iy < rows; iy++) {
+    for (let ix = 0; ix < cols; ix++) {
+      const a = iy * C + ix, b = a + 1, c = a + C, d = c + 1;
+      idx.push(a, c, b, b, c, d);
+    }
+  }
+  const g = new THREE.BufferGeometry();
+  g.setAttribute('position', new THREE.Float32BufferAttribute(pos, 3));
+  g.setIndex(idx);
+  g.computeVertexNormals();
+  return g;
+}
+
+function petalPalette() {
+  const t = currentTheme();
+  return [t.roses[0], t.roses[1], t.roses[2], t.base, '#e6cdd2', '#d9c8dc'];
+}
+
+function buildPetalSystem() {
+  if (petalSystem) return;
+  const geo = makePetalParticleGeometry();
+  const mat = new THREE.MeshStandardMaterial({
+    color: 0xffffff, roughness: 0.66, metalness: 0.0,
+    side: THREE.DoubleSide, transparent: true, opacity: 0.92,
+    depthWrite: true, envMapIntensity: 0.35,
+  });
+  const mesh = new THREE.InstancedMesh(geo, mat, PETAL_COUNT);
+  mesh.instanceMatrix.setUsage(THREE.DynamicDrawUsage);
+  mesh.frustumCulled = false;
+  mesh.castShadow = false;
+  mesh.receiveShadow = false;
+  mesh.visible = state.petals && !window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const palette = petalPalette();
+  const color = new THREE.Color();
+  const data = [];
+  const rng = mulberry32(6688);
+  for (let i = 0; i < PETAL_COUNT; i++) {
+    data.push({
+      x: (rng() - 0.5) * 14,
+      y: rng() * 10,
+      z: (rng() - 0.5) * 11,
+      rx: rng() * Math.PI * 2,
+      ry: rng() * Math.PI * 2,
+      rz: rng() * Math.PI * 2,
+      vrx: (rng() - 0.5) * 1.4,
+      vry: (rng() - 0.5) * 1.6,
+      vrz: (rng() - 0.5) * 1.2,
+      vy: 0.10 + rng() * 0.22,
+      phase: rng() * Math.PI * 2,
+      wf: 0.4 + rng() * 0.6,
+      scale: 0.026 + rng() * 0.028,
+      baseScale: 0.026 + rng() * 0.028,
+    });
+    color.set(palette[(rng() * palette.length) | 0]);
+    mesh.setColorAt(i, color);
+  }
+  mesh.instanceColor.needsUpdate = true;
+  scene.add(mesh);
+  const dummy = new THREE.Object3D();
+  petalSystem = { mesh, data, mat, dummy };
+  // initial matrices
+  updatePetals(0, 0);
+}
+
+function refreshPetalColors() {
+  if (!petalSystem) return;
+  const palette = petalPalette();
+  const color = new THREE.Color();
+  const rng = mulberry32(6688);
+  for (let i = 0; i < PETAL_COUNT; i++) {
+    // consume the same sequence bits used at creation for a stable choice
+    rng(); rng(); rng(); rng(); rng(); rng(); rng(); rng(); rng(); rng(); rng(); rng();
+    color.set(palette[(rng() * palette.length) | 0]);
+    petalSystem.mesh.setColorAt(i, color);
+  }
+  petalSystem.mesh.instanceColor.needsUpdate = true;
+}
+
+function updatePetals(dt, time) {
+  if (!petalSystem) return;
+  if (!state.petals) return;
+  const { mesh, data, dummy } = petalSystem;
+  const px = pointerInside.x, py = pointerInside.y;
+  for (let i = 0; i < data.length; i++) {
+    const p = data[i];
+    p.y -= p.vy * dt;
+    p.x += Math.sin(time * p.wf + p.phase) * 0.09 * dt;
+    p.z += Math.cos(time * p.wf * 0.9 + p.phase) * 0.07 * dt;
+    // gentle air current from the cursor
+    if (pointerInside.active) {
+      const dx = p.x - px, dz = p.z - py;
+      const d2 = dx * dx + dz * dz;
+      if (d2 < 5.6) {
+        const d = Math.sqrt(d2) + 0.001;
+        const f = (1 - d / 2.4) * 0.55;
+        p.x += (dx / d) * f * dt;
+        p.z += (dz / d) * f * dt;
+        p.y += 0.06 * f * dt;
+      }
+    }
+    p.rx += p.vrx * dt;
+    p.ry += p.vry * dt;
+    p.rz += p.vrz * dt;
+    if (p.y < -0.6) {
+      p.y = 9.5 + Math.random() * 3.5;
+      p.x = (Math.random() - 0.5) * 15;
+      p.z = (Math.random() - 0.5) * 13;
+    }
+    dummy.position.set(p.x, p.y, p.z);
+    dummy.rotation.set(p.rx, p.ry, p.rz);
+    dummy.scale.setScalar(p.scale);
+    dummy.updateMatrix();
+    mesh.setMatrixAt(i, dummy.matrix);
+  }
+  mesh.instanceMatrix.needsUpdate = true;
+}
+
+function setPetals(on, silent = false) {
+  state.petals = on;
+  if (!petalSystem) return;
+  if (on) {
+    petalSystem.mesh.visible = true;
+    gsap.to(petalSystem.mat, { opacity: 0.95, duration: 0.6 });
+  } else {
+    gsap.to(petalSystem.mat, {
+      opacity: 0, duration: 0.4,
+      onComplete: () => { if (!state.petals) petalSystem.mesh.visible = false; },
+    });
+  }
+  const btn = $('[data-action="petals"]');
+  if (btn) {
+    btn.classList.toggle('is-on', on);
+    btn.setAttribute('aria-pressed', String(on));
+  }
+  if (!silent) toast(on ? '花瓣雨 · 已飘落' : '花瓣雨 · 已停歇');
+}
+
+/* ------------------------------ fireworks ------------------------------- */
+let fireworkSystem = null;
+const FW_COUNT = isMobile ? 210 : 340;
+
+function buildFireworks() {
+  const geo = new THREE.SphereGeometry(1, 8, 6);
+  const mat = new THREE.MeshStandardMaterial({
+    color: 0xffffff, roughness: 0.24, metalness: 0.12, envMapIntensity: 0.9,
+  });
+  const mesh = new THREE.InstancedMesh(geo, mat, FW_COUNT);
+  mesh.instanceMatrix.setUsage(THREE.DynamicDrawUsage);
+  mesh.frustumCulled = false;
+  mesh.visible = false;
+  mesh.castShadow = false;
+  const dummy = new THREE.Object3D();
+  dummy.scale.setScalar(0);
+  dummy.updateMatrix();
+  for (let i = 0; i < FW_COUNT; i++) mesh.setMatrixAt(i, dummy.matrix);
+  mesh.instanceMatrix.needsUpdate = true;
+  const data = [];
+  const color = new THREE.Color(0xffffff);
+  for (let i = 0; i < FW_COUNT; i++) { data.push({ life: 0, maxLife: 0, x: 0, y: 0, z: 0, vx: 0, vy: 0, vz: 0, s: 0, spin: 0 }); mesh.setColorAt(i, color); }
+  mesh.instanceColor.needsUpdate = true;
+  scene.add(mesh);
+  fireworkSystem = { mesh, data, dummy, active: false };
+}
+
+function burstFireworks() {
+  if (!fireworkSystem) return;
+  const { mesh, data } = fireworkSystem;
+  const origin = new THREE.Vector3();
+  if (candle) candle.flame.getWorldPosition(origin);
+  else origin.set(0, CFG.upperTop + 0.8, 0);
+  const t = currentTheme();
+  const palette = [t.roses[0], t.roses[1], t.roses[2], t.cream, '#c2afc8', '#e8b8ba', '#e8c48a', '#f7f2e8'];
+  const color = new THREE.Color();
+  const rng = mulberry32(991);
+  for (let i = 0; i < data.length; i++) {
+    const p = data[i];
+    const ang = rng() * Math.PI * 2;
+    const up = 1.8 + rng() * 4.2;
+    const out = 1.0 + rng() * 4.4;
+    p.x = origin.x + (rng() - 0.5) * 0.22;
+    p.y = origin.y + (rng() - 0.5) * 0.18;
+    p.z = origin.z + (rng() - 0.5) * 0.22;
+    p.vx = Math.cos(ang) * out;
+    p.vz = Math.sin(ang) * out;
+    p.vy = up;
+    p.maxLife = 2.6 + rng() * 2.0;
+    p.life = p.maxLife;
+    p.s = 0.028 + rng() * 0.055;
+    p.spin = (rng() - 0.5) * 12;
+    color.set(palette[(rng() * palette.length) | 0]);
+    mesh.setColorAt(i, color);
+  }
+  mesh.instanceColor.needsUpdate = true;
+  mesh.visible = true;
+  fireworkSystem.active = true;
+}
+
+function updateFireworks(dt) {
+  if (!fireworkSystem || !fireworkSystem.active) return;
+  const { mesh, data, dummy } = fireworkSystem;
+  let alive = 0;
+  for (let i = 0; i < data.length; i++) {
+    const p = data[i];
+    if (p.life <= 0) {
+      dummy.position.set(0, -50, 0);
+      dummy.scale.setScalar(0);
+      dummy.updateMatrix();
+      mesh.setMatrixAt(i, dummy.matrix);
+      continue;
+    }
+    alive++;
+    p.life -= dt;
+    p.vy -= 4.6 * dt;
+    p.x += p.vx * dt;
+    p.y += p.vy * dt;
+    p.z += p.vz * dt;
+    p.vx *= 0.992;
+    p.vz *= 0.992;
+    if (p.y < 0.035) {
+      p.y = 0.035;
+      p.vy = Math.abs(p.vy) * 0.32;
+      p.vx *= 0.65;
+      p.vz *= 0.65;
+    }
+    const k = clamp(p.life / p.maxLife, 0, 1);
+    dummy.position.set(p.x, p.y, p.z);
+    dummy.rotation.set(p.spin * p.life, p.spin * 0.6 * p.life, 0);
+    dummy.scale.setScalar(p.s * (0.4 + 0.6 * k));
+    dummy.updateMatrix();
+    mesh.setMatrixAt(i, dummy.matrix);
+  }
+  mesh.instanceMatrix.needsUpdate = true;
+  if (!alive) {
+    fireworkSystem.active = false;
+    mesh.visible = false;
+  }
+}
+
+/* -------------------------------- dust ---------------------------------- */
+let dustSystem = null;
+function buildDust() {
+  const N = 180;
+  const pos = new Float32Array(N * 3);
+  const data = [];
+  const rng = mulberry32(5150);
+  for (let i = 0; i < N; i++) {
+    data.push({
+      a: rng() * Math.PI * 2,
+      r: 0.25 + rng() * 0.75,
+      y: rng() * 2.2,
+      speed: 0.08 + rng() * 0.18,
+      phase: rng() * Math.PI * 2,
+    });
+    pos[i * 3] = 0; pos[i * 3 + 1] = data[i].y; pos[i * 3 + 2] = 0;
+  }
+  const geo = new THREE.BufferGeometry();
+  geo.setAttribute('position', new THREE.BufferAttribute(pos, 3));
+  const mat = new THREE.PointsMaterial({
+    map: makeSparkleSprite(), color: 0xffd79a, size: 0.075,
+    transparent: true, opacity: 0, blending: THREE.AdditiveBlending,
+    depthWrite: false, sizeAttenuation: true,
+  });
+  const points = new THREE.Points(geo, mat);
+  points.frustumCulled = false;
+  points.visible = false;
+  topCrown.add(points);
+  dustSystem = { points, mat, data, geo, N };
+}
+function updateDust(dt, time) {
+  if (!dustSystem) return;
+  const show = state.candle === 'lit' || state.candle === 'out' || state.night;
+  const target = state.candle === 'lit' ? 0.78 : 0;
+  dustSystem.mat.opacity += (target - dustSystem.mat.opacity) * Math.min(1, dt * 1.3);
+  if (dustSystem.mat.opacity < 0.01) { dustSystem.points.visible = false; return; }
+  dustSystem.points.visible = true;
+  const arr = dustSystem.geo.attributes.position.array;
+  for (let i = 0; i < dustSystem.N; i++) {
+    const d = dustSystem.data[i];
+    d.y += d.speed * dt;
+    if (d.y > 2.4) {
+      d.y = 0.05;
+      d.a = Math.random() * Math.PI * 2;
+      d.r = 0.22 + Math.random() * 0.8;
+    }
+    const sway = Math.sin(time * 0.8 + d.phase) * 0.10;
+    arr[i * 3] = Math.cos(d.a) * d.r + sway;
+    arr[i * 3 + 1] = d.y;
+    arr[i * 3 + 2] = Math.sin(d.a) * d.r + sway * 0.7;
+  }
+  dustSystem.geo.attributes.position.needsUpdate = true;
+}
+
+/* ------------------------------ candle mode ----------------------------- */
+state.night = false;
+const nightLights = {
+  hemi: 0.95, key: 2.20, fill: 0.50, rim: 0.46, exposure: 0.94,
+};
+function setNight(on) {
+  state.night = on;
+  document.body.classList.toggle('night', on);
+  gsap.to(hemi, { intensity: on ? 0.10 : nightLights.hemi, duration: 1.6, ease: 'sine.inOut' });
+  gsap.to(key, { intensity: on ? 0.20 : nightLights.key, duration: 1.6, ease: 'sine.inOut' });
+  gsap.to(fill, { intensity: on ? 0.05 : nightLights.fill, duration: 1.6, ease: 'sine.inOut' });
+  gsap.to(rim, { intensity: on ? 0.05 : nightLights.rim, duration: 1.6, ease: 'sine.inOut' });
+  gsap.to(renderer, { toneMappingExposure: on ? 1.20 : nightLights.exposure, duration: 1.5, ease: 'sine.inOut' });
+  gsap.to(contactMesh.material, { opacity: on ? 0.82 : 0.62, duration: 1.4 });
+}
+
+function lightCandle() {
+  if (!candle || state.candle === 'lit') return;
+  candle.group.visible = true;
+  candle.group.position.y = -0.95;
+  candle.light.intensity = 0;
+  candle.flame.material.opacity = 0;
+  candle.flame.scale.set(0.001, 0.001, 1);
+  candle.glow.material.opacity = 0;
+  state.candle = 'lit';
+  gsap.to(candle.group.position, { y: 0.01, duration: 1.25, ease: 'power2.out' });
+  gsap.to(candle.flame.scale, { x: 0.205, y: 0.43, duration: 0.7, delay: 0.5, ease: 'back.out(2.2)' });
+  gsap.to(candle.flame.material, { opacity: 1, duration: 0.45, delay: 0.5 });
+  gsap.to(candle.glow.material, { opacity: 0.45, duration: 0.7, delay: 0.65 });
+  setNight(true);
+  syncDock();
+  toast('许愿烛光 · 已点亮');
+}
+
+function blowCandle() {
+  if (!candle || state.candle !== 'lit') return;
+  state.candle = 'out';
+  gsap.to(candle.flame.scale, { x: 0.001, y: 0.001, duration: 0.24, ease: 'power2.in' });
+  gsap.to(candle.flame.material, { opacity: 0, duration: 0.2 });
+  gsap.to(candle.glow.material, { opacity: 0, duration: 0.45 });
+  gsap.to(candle.light, { intensity: 0, duration: 0.4 });
+  burstFireworks();
+  syncDock();
+  toast('愿望已送达 ✦');
+  setTimeout(() => openCard(), 680);
+}
+
+function retractCandle() {
+  if (!candle) return;
+  gsap.to(candle.group.position, {
+    y: -0.95, duration: 0.9, ease: 'power2.in',
+    onComplete: () => {
+      if (candle && state.candle !== 'lit') {
+        candle.group.visible = false;
+        state.candle = 'off';
+        syncDock();
+      }
+    },
+  });
+}
+
+function updateCandle(time) {
+  if (!candle || state.candle !== 'lit') return;
+  const f = 0.86 + 0.09 * Math.sin(time * 9.7) + 0.05 * Math.sin(time * 23.1 + 1.2) + 0.03 * Math.sin(time * 41.3);
+  candle.light.intensity = 11.2 * f;
+  candle.flame.scale.x = 0.205 * (0.96 + 0.05 * Math.sin(time * 17.3));
+  candle.flame.scale.y = 0.43 * (0.94 + 0.08 * Math.sin(time * 12.7 + 0.7));
+  candle.flame.position.x = 0.006 * Math.sin(time * 5.1);
+  candle.flame.position.y = 0.86 + 0.012 * Math.sin(time * 7.3);
+  candle.glow.material.opacity = 0.38 + 0.08 * Math.sin(time * 6.1);
+}
+
+function toggleCandle() {
+  if (state.cardOpen) { closeCard(); return; }
+  if (state.candle === 'lit') blowCandle();
+  else if (state.candle === 'off') lightCandle();
+  else if (state.candle === 'out') {
+    closeCard();
+    setTimeout(() => { if (state.candle !== 'lit') lightCandle(); }, 650);
+  }
+}
+
+/* ------------------------------ birthday card --------------------------- */
+function openCard() {
+  state.cardOpen = true;
+  $('#cardOverlay').classList.add('open');
+  $('#cardOverlay').setAttribute('aria-hidden', 'false');
+  const close = $('#cardClose');
+  if (close) setTimeout(() => close.focus({ preventScroll: true }), 380);
+}
+function closeCard() {
+  if (!state.cardOpen) return;
+  state.cardOpen = false;
+  $('#cardOverlay').classList.remove('open');
+  $('#cardOverlay').setAttribute('aria-hidden', 'true');
+  setTimeout(() => {
+    if (!state.cardOpen && state.candle !== 'lit') {
+      setNight(false);
+      retractCandle();
+    }
+  }, 450);
+}
+
+/* ------------------------------ exploded view --------------------------- */
+const EX = {
+  lowerUpper: 0.58,
+  upperTier: 1.58,
+  upperHalf: 0.56,
+  crown: 2.58,
+  mid: 1.00,
+  base: -0.20,
+  crownScale: 1.12,
+  midScale: 1.08,
+  baseScale: 1.12,
+};
+
+function setExploded(on) {
+  if (!lowerTier || state.exploded === on) return;
+  state.exploded = on;
+  if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+    // snap through the same poses
+    gsap.globalTimeline.timeScale(1);
+  }
+  controls.autoRotate = false;
+  clearTimeout(window.__resumeRotate);
+  const cam = fitCameraTarget(on, window.innerWidth / window.innerHeight);
+  gsap.killTweensOf(camera.position);
+  gsap.killTweensOf(controls.target);
+  gsap.to(camera.position, { x: cam.pos.x, y: cam.pos.y, z: cam.pos.z, duration: 1.55, ease: 'power3.inOut' });
+  gsap.to(controls.target, {
+    x: cam.target.x, y: cam.target.y, z: cam.target.z,
+    duration: 1.55, ease: 'power3.inOut',
+    onComplete: () => { if (state.autoRotate && !state.exploded) controls.autoRotate = true; },
+  });
+
+  const tl = gsap.timeline({ defaults: { duration: 1.35, ease: 'power3.inOut' } });
+  tl.to(lowerTier.userData.upperGroup.position, { y: on ? EX.lowerUpper : 0 }, 0);
+  tl.to(upperTier.position, { y: CFG.lowerTop + (on ? EX.upperTier : 0) }, 0.03);
+  tl.to(upperTier.userData.upperGroup.position, { y: on ? EX.upperHalf : 0 }, 0.12);
+  tl.to(topCrown.position, { y: CFG.upperTop + (on ? EX.crown : 0) }, 0.12);
+  tl.to(topCrown.scale, { x: on ? EX.crownScale : 1, y: on ? EX.crownScale : 1, z: on ? EX.crownScale : 1 }, 0.25);
+  tl.to(midRing.position, { y: CFG.lowerTop + (on ? EX.mid : 0) }, 0.08);
+  tl.to(midRing.scale, { x: on ? EX.midScale : 1, y: on ? EX.midScale : 1, z: on ? EX.midScale : 1 }, 0.20);
+  tl.to(baseRing.position, { y: CFG.boardH + (on ? EX.base : 0) }, 0.04);
+  tl.to(baseRing.scale, { x: on ? EX.baseScale : 1, y: 1, z: on ? EX.baseScale : 1 }, 0.18);
+  tl.call(() => {
+    if (state.autoRotate && on) controls.autoRotate = true;
+  }, null, 1.5);
+
+  showCallouts(on);
+  syncDock();
+  if (!on) toast('蛋糕 · 已重新裱好');
+}
+
+/* ------------------------------- callouts ------------------------------- */
+const calloutEls = $$('.callout');
+let calloutLines = [];
+let calloutConn = [];
+const CALL_N = 4;
+const SVG_NS = 'http://www.w3.org/2000/svg';
+
+function buildCalloutSystem() {
+  const svg = $('#calloutSvg');
+  svg.innerHTML = '';
+  calloutLines = [];
+  for (let i = 0; i < CALL_N; i++) {
+    const g = document.createElementNS(SVG_NS, 'g');
+    const line = document.createElementNS(SVG_NS, 'line');
+    const halo = document.createElementNS(SVG_NS, 'circle');
+    halo.setAttribute('class', 'halo');
+    halo.setAttribute('r', '4.5');
+    const dot = document.createElementNS(SVG_NS, 'circle');
+    dot.setAttribute('r', '2');
+    g.appendChild(line);
+    g.appendChild(halo);
+    g.appendChild(dot);
+    svg.appendChild(g);
+    calloutLines.push({ line, halo, dot });
+  }
+  calloutEls.forEach((el, i) => gsap.set(el, { opacity: 0, y: 10 }));
+  measureCallouts();
+  window.addEventListener('resize', measureCallouts);
+}
+
+function measureCallouts() {
+  calloutConn = calloutEls.map((el, i) => {
+    const cs = getComputedStyle(el);
+    if (cs.display === 'none' || cs.visibility === 'hidden') return null;
+    const r = el.getBoundingClientRect();
+    if (!r.width) return null;
+    const left = i === 0 || i === 2;
+    return { x: left ? r.right + 12 : r.left - 12, y: r.top + Math.min(28, r.height * 0.36) };
+  });
+}
+
+function showCallouts(on) {
+  const svg = $('#calloutSvg');
+  svg.classList.toggle('on', on);
+  if (on) measureCallouts();
+  calloutEls.forEach((el, i) => {
+    if (!calloutConn[i] && on) { gsap.to(el, { opacity: 0, duration: 0.3 }); return; }
+    gsap.to(el, {
+      opacity: on ? 1 : 0,
+      y: on ? 0 : 10,
+      duration: on ? 0.9 : 0.35,
+      delay: on ? 0.85 + i * 0.12 : 0,
+      ease: 'power2.out',
+    });
+  });
+  if (!on) {
+    calloutLines.forEach(({ line, halo, dot }) => {
+      line.setAttribute('opacity', 0);
+      halo.setAttribute('opacity', 0);
+      dot.setAttribute('opacity', 0);
+    });
+  }
+}
+
+const tmpWorld = new THREE.Vector3();
+const tmpNdc = new THREE.Vector3();
+function updateCalloutLines() {
+  if (!state.exploded) return;
+  const w = window.innerWidth, h = window.innerHeight;
+  for (let i = 0; i < CALL_N; i++) {
+    const { line, halo, dot } = calloutLines[i];
+    const anchor = calloutAnchors[i];
+    const conn = calloutConn[i];
+    if (!anchor || !conn) {
+      line.setAttribute('opacity', 0);
+      halo.setAttribute('opacity', 0);
+      dot.setAttribute('opacity', 0);
+      continue;
+    }
+    anchor.getWorldPosition(tmpWorld);
+    tmpNdc.copy(tmpWorld).project(camera);
+    if (tmpNdc.z > 1 || tmpNdc.z < -1) {
+      line.setAttribute('opacity', 0);
+      halo.setAttribute('opacity', 0);
+      dot.setAttribute('opacity', 0);
+      continue;
+    }
+    const x = (tmpNdc.x * 0.5 + 0.5) * w;
+    const y = (-tmpNdc.y * 0.5 + 0.5) * h;
+    line.setAttribute('x1', x);
+    line.setAttribute('y1', y);
+    line.setAttribute('x2', conn.x);
+    line.setAttribute('y2', conn.y);
+    line.setAttribute('opacity', 1);
+    halo.setAttribute('cx', x);
+    halo.setAttribute('cy', y);
+    halo.setAttribute('opacity', 1);
+    dot.setAttribute('cx', x);
+    dot.setAttribute('cy', y);
+    dot.setAttribute('opacity', 1);
+  }
+}
+
+/* ------------------------------- palette -------------------------------- */
+function tweenCreamColors(hex) {
+  const target = new THREE.Color(hex);
+  creamBindings.forEach((m) => {
+    gsap.to(m.color, { r: target.r, g: target.g, b: target.b, duration: 1.0, ease: 'sine.inOut' });
+  });
+}
+function tweenRoseColors(theme) {
+  MATS.roses.forEach((m, i) => {
+    const c = new THREE.Color(theme.roses[i]);
+    gsap.to(m.color, { r: c.r, g: c.g, b: c.b, duration: 1.1, ease: 'sine.inOut' });
+  });
+  const leaf = new THREE.Color(theme.leaf);
+  gsap.to(MATS.leaf.color, { r: leaf.r, g: leaf.g, b: leaf.b, duration: 1.1, ease: 'sine.inOut' });
+}
+
+function switchTheme() {
+  if (state.themeBusy) return;
+  state.themeBusy = true;
+  const next = (themeIndex + 1) % THEMES.length;
+  toast('调色盘中 · ' + THEMES[next].name);
+  setTimeout(() => {
+    try {
+      const prev = THEMES[themeIndex];
+      const prevPack = themeTextures.get(prev.id) || buildThemeTextures(themeIndex);
+      const nextPack = buildThemeTextures(next);
+      themeIndex = next;
+      const theme = THEMES[themeIndex];
+      const proxy = { v: 0 };
+      for (const b of bodyBindings) {
+        b.uniforms.uTexA.value = prevPack[b.surface];
+        b.uniforms.uTexB.value = nextPack[b.surface];
+        b.uniforms.uMix.value = 0;
+      }
+      gsap.to(proxy, {
+        v: 1, duration: 1.15, ease: 'sine.inOut',
+        onUpdate: () => { for (const b of bodyBindings) b.uniforms.uMix.value = proxy.v; },
+        onComplete: () => {
+          for (const b of bodyBindings) {
+            b.uniforms.uTexA.value = nextPack[b.surface];
+            b.uniforms.uTexB.value = nextPack[b.surface];
+            b.uniforms.uMix.value = 0;
+          }
+          state.themeBusy = false;
+        },
+      });
+      tweenCreamColors(theme.cream);
+      tweenRoseColors(theme);
+      refreshPetalColors();
+      document.documentElement.style.setProperty('--accent', theme.accent);
+      toast('已切换 · ' + theme.name);
+    } catch (e) {
+      console.error(e);
+      state.themeBusy = false;
+      toast('调色失败，请再试一次');
+    }
+  }, 40);
+}
+
+function prewarmThemes() {
+  setTimeout(() => { try { buildThemeTextures(1); } catch (e) { /* prewarm */ } }, 2600);
+  setTimeout(() => { try { buildThemeTextures(2); } catch (e) { /* prewarm */ } }, 5600);
+}
+
+/* -------------------------------- toast --------------------------------- */
+let toastTimer = null;
+function toast(text, ms = 1900) {
+  const el = $('#toast');
+  if (!el) return;
+  el.textContent = text;
+  el.classList.add('on');
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => el.classList.remove('on'), ms);
+}
+
+/* ------------------------------ dock / ui ------------------------------- */
+function syncDock() {
+  const rotate = $('[data-action="rotate"]');
+  const explode = $('[data-action="explode"]');
+  const candleBtn = $('[data-action="candle"]');
+  const petals = $('[data-action="petals"]');
+  if (rotate) {
+    rotate.classList.toggle('is-on', state.autoRotate);
+    rotate.setAttribute('aria-pressed', String(state.autoRotate));
+  }
+  if (explode) {
+    explode.classList.toggle('is-on', state.exploded);
+    explode.setAttribute('aria-pressed', String(state.exploded));
+    const txt = explode.querySelector('.txt');
+    if (txt) txt.textContent = state.exploded ? '还原蛋糕' : '拆解结构';
+  }
+  if (candleBtn) {
+    candleBtn.classList.toggle('is-on', state.candle === 'lit');
+    candleBtn.setAttribute('aria-pressed', String(state.candle === 'lit'));
+    const txt = candleBtn.querySelector('.txt');
+    if (txt) txt.textContent = state.candle === 'lit' ? '吹灭蜡烛' : (state.candle === 'out' ? '再许一次愿' : '点亮烛光');
+  }
+  if (petals) {
+    petals.classList.toggle('is-on', state.petals);
+    petals.setAttribute('aria-pressed', String(state.petals));
+  }
+}
+
+function handleAction(action) {
+  switch (action) {
+    case 'rotate':
+      state.autoRotate = !state.autoRotate;
+      controls.autoRotate = state.autoRotate;
+      syncDock();
+      toast(state.autoRotate ? '自动旋转 · 开启' : '自动旋转 · 暂停');
+      break;
+    case 'explode':
+      setExploded(!state.exploded);
+      break;
+    case 'candle':
+      toggleCandle();
+      break;
+    case 'palette':
+      switchTheme();
+      break;
+    case 'petals':
+      setPetals(!state.petals);
+      break;
+  }
+}
+
+function setupUI() {
+  $$('.dock-btn').forEach((btn) => {
+    btn.addEventListener('click', () => handleAction(btn.dataset.action));
+  });
+
+  $('#cardClose') && $('#cardClose').addEventListener('click', closeCard);
+  $('#cardX') && $('#cardX').addEventListener('click', closeCard);
+  $('#cardOverlay') && $('#cardOverlay').addEventListener('click', (e) => {
+    if (e.target === $('#cardOverlay')) closeCard();
+  });
+
+  // personalisation via ?to= &from=
+  const params = new URLSearchParams(location.search);
+  const to = params.get('to');
+  const from = params.get('from');
+  if (to && $('#cardTo')) $('#cardTo').textContent = '致 ' + to;
+  if (from && $('#cardFrom')) $('#cardFrom').textContent = '— ' + from;
+
+  // pause auto-rotation while the guest is handling the cake
+  let resumeTimer = null;
+  controls.addEventListener('start', () => {
+    clearTimeout(resumeTimer);
+    if (controls.autoRotate) controls.autoRotate = false;
+  });
+  controls.addEventListener('end', () => {
+    clearTimeout(resumeTimer);
+    resumeTimer = window.__resumeRotate = setTimeout(() => {
+      if (state.autoRotate) controls.autoRotate = true;
+    }, 2800);
+  });
+
+  // pointer + double-click interaction
+  let down = null;
+  let clickTimer = null;
+  let lastHit = null;
+  const pointer = new THREE.Vector2();
+
+  function pick(clientX, clientY) {
+    const rect = renderer.domElement.getBoundingClientRect();
+    pointer.x = ((clientX - rect.left) / rect.width) * 2 - 1;
+    pointer.y = -((clientY - rect.top) / rect.height) * 2 + 1;
+    raycaster.setFromCamera(pointer, camera);
+    const hits = raycaster.intersectObject(cake, true);
+    return hits.length ? hits[0] : null;
+  }
+
+  canvas.addEventListener('pointerdown', (e) => {
+    down = { x: e.clientX, y: e.clientY, t: performance.now() };
+    pointerInside.active = false;
+  });
+  canvas.addEventListener('pointermove', (e) => {
+    pointerInside.x = 0; pointerInside.y = 0; // unused 2D path; updated below
+    const rect = renderer.domElement.getBoundingClientRect();
+    const nx = ((e.clientX - rect.left) / rect.width) * 2 - 1;
+    const ny = -((e.clientY - rect.top) / rect.height) * 2 + 1;
+    pointerNDC.set(nx, ny);
+    raycaster.setFromCamera(pointerNDC, camera);
+    raycaster.ray.at(8.8, pointerWorld);
+    pointerInside.x = pointerWorld.x;
+    pointerInside.y = pointerWorld.z;
+    pointerInside.active = true;
+  });
+  canvas.addEventListener('pointerleave', () => { pointerInside.active = false; });
+  canvas.addEventListener('pointerup', (e) => {
+    if (!down) return;
+    const moved = Math.hypot(e.clientX - down.x, e.clientY - down.y);
+    const elapsed = performance.now() - down.t;
+    down = null;
+    if (moved > 7 || elapsed > 650) return;
+    const hit = pick(e.clientX, e.clientY);
+    if (!hit) return;
+    lastHit = hit;
+    if (clickTimer) {
+      clearTimeout(clickTimer);
+      clickTimer = null;
+      if (hit.object.userData.isTop) toggleCandle();
+      else setExploded(!state.exploded);
+    } else {
+      clickTimer = setTimeout(() => {
+        clickTimer = null;
+        if (lastHit) setExploded(!state.exploded);
+      }, 245);
+    }
+  });
+
+  window.addEventListener('keydown', (e) => {
+    if (e.code === 'Space') {
+      if (e.target && e.target.tagName === 'BUTTON') return;
+      e.preventDefault();
+      toggleCandle();
+    } else if (e.code === 'Escape') {
+      if (state.cardOpen) closeCard();
+      else if (state.exploded) setExploded(false);
+    }
+  });
+
+  controls.autoRotate = state.autoRotate;
+  syncDock();
+  document.documentElement.style.setProperty('--accent', currentTheme().accent);
+}
+
+/* ------------------------------- resize --------------------------------- */
+function onResize() {
+  const w = window.innerWidth, h = window.innerHeight;
+  camera.aspect = w / h;
+  camera.updateProjectionMatrix();
+  renderer.setSize(w, h);
+  measureCallouts();
+}
+window.addEventListener('resize', onResize);
+window.addEventListener('orientationchange', () => setTimeout(onResize, 200));
+
+/* ------------------------------ animation ------------------------------- */
+let lastT = performance.now();
+let elapsed = 0;
+function animate(now) {
+  const dt = Math.min(0.05, (now - lastT) / 1000);
+  lastT = now;
+  elapsed += dt;
+  controls.update();
+  updatePetals(dt, elapsed);
+  updateFireworks(dt);
+  updateDust(dt, elapsed);
+  updateCandle(elapsed);
+  if (state.exploded) updateCalloutLines();
+  renderer.render(scene, camera);
+}
+
+/* -------------------------------- loader -------------------------------- */
+function setLoader(p, text) {
+  const bar = $('#loaderBar');
+  const st = $('#loaderStatus');
+  if (bar) bar.style.width = p + '%';
+  if (st && text) st.textContent = text;
+}
+function showLoaderError(err) {
+  const st = $('#loaderStatus');
+  const er = $('#loaderErr');
+  if (st) st.textContent = '加载未完成';
+  if (er) {
+    er.style.display = 'block';
+    er.textContent = '遇到了一个问题：' + (err && err.message ? err.message : err) + '。请刷新页面重试。';
+  }
+}
+
+/* ------------------------------- boot ----------------------------------- */
+async function init() {
+  try {
+    setLoader(5, '正在准备奶油与面粉…');
+    await nextFrame();
+    buildCakeWorld();
+    setLoader(62, '正在手挤奶油玫瑰…');
+    await nextFrame();
+    buildCalloutSystem();
+    setLoader(80, '正在镶嵌珍珠糖珠…');
+    await nextFrame();
+    setupUI();
+    setLoader(92, '正在布置影棚柔光…');
+    await nextFrame();
+    controls.update();
+    renderer.render(scene, camera);
+    setLoader(100, '为你准备好了');
+    await new Promise((r) => setTimeout(r, 380));
+    const loader = $('#loader');
+    loader.classList.add('done');
+    setTimeout(() => { loader.style.display = 'none'; }, 1100);
+    state.loaded = true;
+    renderer.setAnimationLoop(animate);
+    prewarmThemes();
+  } catch (err) {
+    console.error(err);
+    showLoaderError(err);
+  }
+}
+
+init();
+
+</script>
+</body>
+</html>
