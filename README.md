@@ -120,3 +120,7 @@ morandi-buttercream-cake/
 ## 📜 开源许可证 (License)
 
 本项目基于 [MIT License](./LICENSE) 开源。欢迎 Star、Fork 与二次创作！
+
+## 仓库声明
+
+本仓库的署名与参考规范见 [NOTICE](NOTICE)：参考、借鉴或改造本仓库时，请标明来源 sukikeeling/morandi-buttercream-cake。
